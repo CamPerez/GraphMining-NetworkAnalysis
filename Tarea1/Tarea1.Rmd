@@ -1,0 +1,123 @@
+---
+title: "Tarea 1"
+author: "Laura Basalo, Camila Pérez y Adrián Nogales"
+date: "7/11/2020"
+output: html_document
+---
+
+  
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=8, fig.align="center", echo=TRUE, warning=FALSE, message=FALSE)
+library(knitr)
+library(igraph)
+```
+
+
+**1)** The file **facebook_sample_anon.txt** is a data table containing the list of edges of an anonymized sample of the Facebook friendship network. Download it on your computer,  upload it to R as a dataframe, and define an undirected graph with this list of edges.
+
+
+```{r}
+#We load the file data and we save it in a variable
+dataframe = read.table("data/facebook_sample_anon.txt",
+                header = FALSE, 
+                col.names = c("nodeA", "nodeB"),
+                sep = " ")
+
+#Number of observations
+n = nrow(dataframe)
+
+
+#We define an undirected graph with the data loaded
+undirected_graph = graph_from_data_frame(dataframe, directed=F)
+#plot(undirected_graph)
+
+```
+
+
+*a)* Is it connected? If it is not, replace it by its largest connected component.
+```{r}
+is.connected(undirected_graph)
+```
+
+
+
+*b)* Compute the edge density.
+```{r}
+edge_density(undirected_graph, loops=F)
+#  0.01081996
+```
+
+
+*c)* What is the mean distance among the subjects?
+
+```{r}
+mean_distance(undirected_graph, directed=F)
+# 3.692507
+```
+
+  
+*d)* Calculate the list of vertices in a diameter of the graph. Plot only this path with the size of the node proportional to the degree of the node.
+
+```{r}
+#List de vértices del diametro
+diameter = get_diameter(undirected_graph, directed=F)
+#List de vertices se pasa a objeto vector
+as.vector(diameter)
+
+#Pintamos los vértices
+vcol <- rep("gray40", vcount(undirected_graph))
+vcol[diameter] <- "gold"
+#Pintamos las aristas
+ecol <- rep("gray80", ecount(undirected_graph))
+ecol[E(undirected_graph, path=diameter)] <- "orange" 
+
+#Plot 
+#plot(undirected_graph, vertex.color=vcol, edge.color=ecol, edge.arrow.mode=0)
+
+
+```
+
+
+*e)* Calculate the shortest path from the vertex named "1000" to the vertex named "2000" in the original file.
+
+```{r}
+undirected_graph
+str(undirected_graph)
+E(undirected_graph)
+V(undirected_graph)
+E(undirected_graph)$
+V(net)$media
+
+
+
+shortest = shortest_paths(undirected_graph, 
+                          from = V(undirected_graph)["1000"], 
+                          to  = V(undirected_graph)["2000"],
+                          output = "both") # both path nodes and edges
+
+#Camino más corto (en vertices): 1000 107  58   1912 2000
+```
+
+
+
+*f)* Calculate a clique of  5 friends, if there is one. 
+
+```{r}
+#cliques(undirected_graph, min = 5, max = 5)
+```
+
+
+*h)* Calculate the list of names of verteces that are the neigbours of verteces of degree one and that are not of degree one. 
+```{r}
+degree(undirected_graph, mode="all")
+
+#Vertices cuyo grado no es 1
+vertices_no_uno = V(undirected_graph)[degree(undirected_graph)!=1]
+print(vertices_no_uno)
+
+vecinos = adjacent_vertices(undirected_graph, v = vertices_no_uno)
+print(vecinos)
+
+
+```
+
