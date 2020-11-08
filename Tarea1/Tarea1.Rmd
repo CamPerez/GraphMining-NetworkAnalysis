@@ -1,8 +1,10 @@
 ---
-title: "Tarea 1"
-author: "Laura Basalo, Camila Pérez y Adrián Nogales"
+title: 'Entrega: Tarea 1'
+author: "Laura Basalo Tur, Camila Pérez Arévalo"
 date: "7/11/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
   
@@ -13,7 +15,9 @@ library(igraph)
 ```
 
 
-**1)** The file **facebook_sample_anon.txt** is a data table containing the list of edges of an anonymized sample of the Facebook friendship network. Download it on your computer,  upload it to R as a dataframe, and define an undirected graph with this list of edges.
+### Ejercicio 1
+
+**The file *facebook_sample_anon.txt* is a data table containing the list of edges of an anonymized sample of the Facebook friendship network. Download it on your computer,  upload it to R as a dataframe, and define an undirected graph with this list of edges.**
 
 
 ```{r}
@@ -23,32 +27,30 @@ dataframe = read.table("data/facebook_sample_anon.txt",
                 col.names = c("nodeA", "nodeB"),
                 sep = " ")
 
-#Number of observations
+#Obtenemos 
 n = nrow(dataframe)
-
 
 #We define an undirected graph with the data loaded
 undirected_graph = graph_from_data_frame(dataframe, directed=F)
-#plot(undirected_graph)
 
 ```
 
 
-*a)* Is it connected? If it is not, replace it by its largest connected component.
+**a) Is it connected? If it is not, replace it by its largest connected component.**
 ```{r}
 is.connected(undirected_graph)
 ```
 
 
 
-*b)* Compute the edge density.
+**b) Compute the edge density.**
 ```{r}
 edge_density(undirected_graph, loops=F)
 #  0.01081996
 ```
 
 
-*c)* What is the mean distance among the subjects?
+**c) What is the mean distance among the subjects?**
 
 ```{r}
 mean_distance(undirected_graph, directed=F)
@@ -56,40 +58,48 @@ mean_distance(undirected_graph, directed=F)
 ```
 
   
-*d)* Calculate the list of vertices in a diameter of the graph. Plot only this path with the size of the node proportional to the degree of the node.
+**d) Calculate the list of vertices in a diameter of the graph. Plot only this path with the size of the node proportional to the degree of the node.**
 
 ```{r}
+
+#Guardamos el grado de cada vértices
+V(undirected_graph)$vertex_degree = degree(undirected_graph)
+
 #List de vértices del diametro
 diameter = get_diameter(undirected_graph, directed=F)
-#List de vertices se pasa a objeto vector
-as.vector(diameter)
+#Creamos el subgrafo de
+subgraph = induced_subgraph(undirected_graph, diameter)
 
-#Pintamos los vértices
-vcol <- rep("gray40", vcount(undirected_graph))
-vcol[diameter] <- "gold"
-#Pintamos las aristas
-ecol <- rep("gray80", ecount(undirected_graph))
-ecol[E(undirected_graph, path=diameter)] <- "orange" 
 
-#Plot 
-#plot(undirected_graph, vertex.color=vcol, edge.color=ecol, edge.arrow.mode=0)
+# Get the layout coordinates:
+lo <- layout_with_fr(subgraph)
+# Normalize them so that they are in the -1, 1 interval:
+lo <- norm_coords(lo, ymin=-1, ymax=1, xmin=-1, xmax=1)
+
+
+#V(subgraph)$color = ifelse(V(subgraph)$vertex_degree>100, "lightblue", "orange")
+V(subgraph)$color = V(subgraph)$vertex_degree
+
+
+
+V(subgraph)$vertex_degree
+V(subgraph)$color
+
+plot(subgraph, 
+     vertex.size = V(subgraph)$vertex_degree/8 + 5, 
+     rescale=F, 
+     layout=lo,
+     edge.width= 2.5,
+     vertex.label.dist=4
+     )
 
 
 ```
 
 
-*e)* Calculate the shortest path from the vertex named "1000" to the vertex named "2000" in the original file.
+**e) Calculate the shortest path from the vertex named "1000" to the vertex named "2000" in the original file.**
 
 ```{r}
-undirected_graph
-str(undirected_graph)
-E(undirected_graph)
-V(undirected_graph)
-E(undirected_graph)$
-V(net)$media
-
-
-
 shortest = shortest_paths(undirected_graph, 
                           from = V(undirected_graph)["1000"], 
                           to  = V(undirected_graph)["2000"],
@@ -100,24 +110,37 @@ shortest = shortest_paths(undirected_graph,
 
 
 
-*f)* Calculate a clique of  5 friends, if there is one. 
+**f) Calculate a clique of  5 friends, if there is one.**
 
 ```{r}
-#cliques(undirected_graph, min = 5, max = 5)
+#cliques(undirected_graph, min = 4)
 ```
 
 
-*h)* Calculate the list of names of verteces that are the neigbours of verteces of degree one and that are not of degree one. 
+**h) Calculate the list of names of verteces that are the neigbours of verteces of degree one and that are not of degree one. **
 ```{r}
-degree(undirected_graph, mode="all")
+V(undirected_graph)$degree = degree(undirected_graph, mode="all")
 
-#Vertices cuyo grado no es 1
-vertices_no_uno = V(undirected_graph)[degree(undirected_graph)!=1]
-print(vertices_no_uno)
+#Vertices cuyo grado es 1 (solo tienen 1 vecino)
+vertices_1_grado = V(undirected_graph)[degree(undirected_graph)==1]
+print(vertices_1_grado)
 
-vecinos = adjacent_vertices(undirected_graph, v = vertices_no_uno)
-print(vecinos)
+vecinos = adjacent_vertices(undirected_graph, v = vertices_1_grado)
+vecinos = unlist(vecinos)
+
+list = V(undirected_graph)[vecinos]
+unique(list)
 
 
+
+```
+
+**i) Encuentra una clique de 4  nodos o más  pero no hallándolas todas sino escribiendo un programa que las busque y pare cuando encuentre una.**
+
+```{r}
+#find_clique = function(graph, clique_size){
+#g <- graph( edges=c(1,2, 2,3, 3,1), n=3, directed=F )
+#plot(g)
+  
 ```
 
