@@ -88,7 +88,7 @@ El diámetro de un grafo es la mayor distancia entre todos los pares de puntos d
 ```{r apartadoD, fig.cap = "Representación gráfica del diámetro del grafo principal."}
 
 #Calculamos y guardamos el grado de cada vértice del grafo
-V(undirected_graph)$vertex_degree = degree(undirected_graph)
+V(undirected_graph)$v_dg = degree(undirected_graph)
 
 #Obtenemos el diametro del grafo
 diameter = get_diameter(undirected_graph, directed=F)
@@ -102,17 +102,17 @@ lo = layout.fruchterman.reingold(subgraph)
 lo <- norm_coords(lo, ymin=-1, ymax=1, xmin=-1, xmax=1)
 
 #Asociamos un color a cada vértice en función del grado del vértice 
-V(subgraph)[V(subgraph)$vertex_degree < 50]$color = "khaki1"
-V(subgraph)[V(subgraph)$vertex_degree > 50 & V(subgraph)$vertex_degree < 100]$color = "goldenrod1"
-V(subgraph)[V(subgraph)$vertex_degree > 100 & V(subgraph)$vertex_degree < 300]$color = "lightcoral"
-V(subgraph)[V(subgraph)$vertex_degree > 300]$color = "tomato2"
+V(subgraph)[V(subgraph)$v_dg < 50]$color = "khaki1"
+V(subgraph)[V(subgraph)$v_dg > 50 & V(subgraph)$v_dg < 100]$color = "goldenrod1"
+V(subgraph)[V(subgraph)$v_dg > 100 & V(subgraph)$v_dg < 300]$color = "lightcoral"
+V(subgraph)[V(subgraph)$v_dg > 300]$color = "tomato2"
 
 #Generamos el plot del subgrafo
 plot(subgraph, 
      main = "Diámetro del grafo y grado de los vértices",
      layout = lo,
      vertex.frame.color = "black",
-     vertex.size = V(subgraph)$vertex_degree/10 + 3, 
+     vertex.size = V(subgraph)$v_dg/10 + 3, 
      vertex.label.color= "black",
      vertex.label.font= 2,
      vertex.label.cex= 1,
@@ -180,4 +180,58 @@ resultado = unique(nombre_vecinos)
 
 ```
 La lista de vértices es: `r resultado`.
+
+
+&nbsp;
+
+
+
+**i) Extra: Programa que busque una clique de X tamaño y pare al encontrarla. **
+
+El problema de encontrar cliques en un grafo se resuelve mediante el algoritmo de Bron–Kerbosch, que en pseudocódigo se puede representar de la siguiente manera:
+
+
+```{r echo=FALSE, out.width = "50%",fig.align='center'}
+knitr::include_graphics("img/BronKerbosch.png")
+
+```
+
+
+Donde *R* y *X* son vectores vacíos y *P* los vértices del grafo del cual se quieren hallar los cliques. Pasando este código a `R`, se observa como: 
+
+```{r}
+bron_kerbosch <- function(R,P,X) {
+
+    if (length(P) == 0 && length(X) == 0) {
+      print (R)
+    } else {
+        for (v in P) {
+            neis <- neighbors(g,v)$name
+            bron_kerbosch(union(R,v),intersect(P,neis),intersect(X,neis))
+            P <- c(P[-which(P==v)])
+            X <- c(X,v)
+        }
+    }
+}
+```
+
+
+Con este algoritmo se imprimirían todos los cliques del grafo, hasta el clique máximo. Para controlar en qué clique parar de calcular se debería añadir una condición en el *if* que imprimiese solamente cuando la longitud del parámetro *R* fuese el número del tamaño del clique. Por ejemplo, en el siguiente código de bloque se muestra el algoritmo con la nueva condición añadida para cliques de tamaño 4:
+
+
+```{r eval=FALSE}
+bronkerbosch <- function(R,P,X) {
+
+    if (length(P) == 0 && length(X) == 0 && length(R) == 4) {
+      print (R)
+    } else {
+        for (v in P) {
+            neighbors <- neighbors(g,v)$name
+            bronkerbosch(union(R,v),intersect(P,neighbors),intersect(X,neighbors))
+            P <- c(P[-which(P==v)])
+            X <- c(X,v)
+        }
+    }
+}
+```
 
