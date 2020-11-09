@@ -83,14 +83,14 @@ El resultado obtenido de la distancia media es `r mean_distance`.
 
 **d) Calculate the list of vertices in a diameter of the graph. Plot only this path with the size of the node proportional to the degree of the node.**
 
-El diámetro de un grafo es la mayor distancia entre todos los pares de puntos de la misma. A continuación se obtiene el listado de vértices del diametro del grafo y se representa un gráfico con el camino del mismo.
+El diámetro de un grafo es la mayor distancia entre todos los pares de puntos de la misma. A continuación se obtiene el listado de vértices del diámetro del grafo y se representa un gráfico con el camino del mismo.
 
 ```{r apartadoD, fig.cap = "Representación gráfica del diámetro del grafo principal."}
 
 #Calculamos y guardamos el grado de cada vértice del grafo
 V(undirected_graph)$vertex_degree = degree(undirected_graph)
 
-#Obtenemos el diametro del grafo
+#Obtenemos el diámetro del grafo
 diameter = get_diameter(undirected_graph, directed=F)
 
 #Creamos el subgrafo a partir de los vértices que forman el diámetro del grafo original
