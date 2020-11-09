@@ -20,127 +20,164 @@ library(igraph)
 **The file *facebook_sample_anon.txt* is a data table containing the list of edges of an anonymized sample of the Facebook friendship network. Download it on your computer,  upload it to R as a dataframe, and define an undirected graph with this list of edges.**
 
 
-```{r}
-#We load the file data and we save it in a variable
+```{r cargarDatos}
+#Cargamos los datos del fichero .txt en un dataframe
 dataframe = read.table("data/facebook_sample_anon.txt",
-                header = FALSE, 
-                col.names = c("nodeA", "nodeB"),
-                sep = " ")
+                       header = FALSE, 
+                       col.names = c("nodeA", "nodeB"),
+                       sep = " ")
 
-#Obtenemos 
-n = nrow(dataframe)
-
-#We define an undirected graph with the data loaded
+#Generamos el grafo no dirigido desde los datos del dataframe
 undirected_graph = graph_from_data_frame(dataframe, directed=F)
 
 ```
 
 
+&nbsp;
+
+
 **a) Is it connected? If it is not, replace it by its largest connected component.**
-```{r}
-is.connected(undirected_graph)
+
+Un grafo es conexo si cada par de vértices está conectado por un camino; es decir, si para cualquier par de vértices (a, b), existe al menos un camino posible desde *'a'* hacia *'b'*.
+
+
+Para comprobar si el grafo guardado en la variable *undirected_graph* es conexo se ha utilizado la función *is.connected*.  
+
+```{r apartadoA}
+is_connect = is.connected(undirected_graph)
 ```
+
+El resultado obtenido es `r is_connect`, por lo que podemos afirmar que el grafo es conexo.
+
+
+&nbsp;
 
 
 
 **b) Compute the edge density.**
-```{r}
-edge_density(undirected_graph, loops=F)
-#  0.01081996
+
+La densidad de un grafo es la relación entre el número de aristas del grafo y el número de aristas máximo. Para calcular la densidad se ha utilizado la función *edge_density*, indicando que no tenga en cuenta ningún posible loop del grafo.
+
+```{r apartadoB}
+density = edge_density(undirected_graph, loops=F)
 ```
+El resultado obtenido es `r density`, por lo que podemos deducir que el grafo es disperso.
+
+
+&nbsp;
+
 
 
 **c) What is the mean distance among the subjects?**
 
-```{r}
-mean_distance(undirected_graph, directed=F)
-# 3.692507
-```
+La distancia entre dos vértices de un grafo es el número de vértices mínimo que debe recorrerse para unirlos. Para calcular la media de esta distancia se ha utilizado la función *mean_distance*.
 
-  
+```{r apartadoC}
+mean_distance = mean_distance(undirected_graph, directed=F)
+```
+El resultado obtenido de la distancia media es `r mean_distance`.
+
+
+&nbsp;
+
+
 **d) Calculate the list of vertices in a diameter of the graph. Plot only this path with the size of the node proportional to the degree of the node.**
 
-```{r}
+El diámetro de un grafo es la mayor distancia entre todos los pares de puntos de la misma. A continuación se obtiene el listado de vértices del diametro del grafo y se representa un gráfico con el camino del mismo.
 
-#Guardamos el grado de cada vértices
+```{r apartadoD, fig.cap = "Representación gráfica del diámetro del grafo principal."}
+
+#Calculamos y guardamos el grado de cada vértice del grafo
 V(undirected_graph)$vertex_degree = degree(undirected_graph)
 
-#List de vértices del diametro
+#Obtenemos el diametro del grafo
 diameter = get_diameter(undirected_graph, directed=F)
-#Creamos el subgrafo de
-subgraph = induced_subgraph(undirected_graph, diameter)
 
+#Creamos el subgrafo a partir de los vértices que forman el diámetro del grafo original
+subgraph = induced_subgraph(undirected_graph, V(undirected_graph)[diameter])
 
-# Get the layout coordinates:
-lo <- layout_with_fr(subgraph)
-# Normalize them so that they are in the -1, 1 interval:
+#Indicamos el layaout a utilizar
+set.seed(1234)
+lo = layout.fruchterman.reingold(subgraph)
 lo <- norm_coords(lo, ymin=-1, ymax=1, xmin=-1, xmax=1)
 
+#Asociamos un color a cada vértice en función del grado del vértice 
+V(subgraph)[V(subgraph)$vertex_degree < 50]$color = "khaki1"
+V(subgraph)[V(subgraph)$vertex_degree > 50 & V(subgraph)$vertex_degree < 100]$color = "goldenrod1"
+V(subgraph)[V(subgraph)$vertex_degree > 100 & V(subgraph)$vertex_degree < 300]$color = "lightcoral"
+V(subgraph)[V(subgraph)$vertex_degree > 300]$color = "tomato2"
 
-#V(subgraph)$color = ifelse(V(subgraph)$vertex_degree>100, "lightblue", "orange")
-V(subgraph)$color = V(subgraph)$vertex_degree
-
-
-
-V(subgraph)$vertex_degree
-V(subgraph)$color
-
+#Generamos el plot del subgrafo
 plot(subgraph, 
-     vertex.size = V(subgraph)$vertex_degree/8 + 5, 
-     rescale=F, 
-     layout=lo,
-     edge.width= 2.5,
-     vertex.label.dist=4
+     main = "Diámetro del grafo y grado de los vértices",
+     layout = lo,
+     vertex.frame.color = "black",
+     vertex.size = V(subgraph)$vertex_degree/10 + 3, 
+     vertex.label.color= "black",
+     vertex.label.font= 2,
+     vertex.label.cex= 1,
+     vertex.label.dist= 5.3,
+     edge.color= "gray80",
+     edge.width= 2
      )
-
-
 ```
+El resultado y representación del subgrafo obtenido del diámetro del grafo principal se puede observar en la Figura \ref{fig:apartadoD}. El diámetro del grafo es el siguiente listado de vértices: `r diameter` y en la representación el tamaño de su respectivo nodo es proporcional a su grado.
+
+
+&nbsp;
 
 
 **e) Calculate the shortest path from the vertex named "1000" to the vertex named "2000" in the original file.**
+
+Para calcular el camino más corto entre los vértices se ha utilizado la función *shortest_paths*.
 
 ```{r}
 shortest = shortest_paths(undirected_graph, 
                           from = V(undirected_graph)["1000"], 
                           to  = V(undirected_graph)["2000"],
                           output = "both") # both path nodes and edges
-
-#Camino más corto (en vertices): 1000 107  58   1912 2000
 ```
+Se observa que el resultado del camino más corto, en vértices, es el siguiente: `r shortest$vpath`.
+`r `
 
+
+&nbsp;
 
 
 **f) Calculate a clique of  5 friends, if there is one.**
 
-```{r}
-#cliques(undirected_graph, min = 4)
+Un clique es un subgrafo en el que cada vértice está conectado a todos los demás vértices del subgrafo. Para calcular los cliques de un grafo se puede utilizar la función *cliques*. En este caso, al ser un grafo de gran magnitud, la complejidad para encontrar los cliques es muy alta y tardaría horas en obtener un resultado. 
+
+De forma teórica se realizaría el cálculo de la siguiente manera:
+```{r apartadoF}
+#cliques(undirected_graph, min = 5, max = 5)
 ```
+
+
+&nbsp;
 
 
 **h) Calculate the list of names of verteces that are the neigbours of verteces of degree one and that are not of degree one. **
+
+Para calcular el listado vértices de grado diferente a 1 y con vecinos con grado igual a 1 realizamos los siguientes pasos:
+
 ```{r}
+#Calculamos el grado de todos los vértices y guardamos su resultado
 V(undirected_graph)$degree = degree(undirected_graph, mode="all")
 
-#Vertices cuyo grado es 1 (solo tienen 1 vecino)
+#Filtramos los vértices cuyo grado es 1 (solo tienen 1 vecino)
 vertices_1_grado = V(undirected_graph)[degree(undirected_graph)==1]
-print(vertices_1_grado)
 
+#Obtenemos la lista de vértices que son adyacentes a los vértices de grado 1
 vecinos = adjacent_vertices(undirected_graph, v = vertices_1_grado)
 vecinos = unlist(vecinos)
 
-list = V(undirected_graph)[vecinos]
-unique(list)
+#Obtenemos el listado de vértices a partir de sus posiciones
+nombre_vecinos = V(undirected_graph)[vecinos]
 
-
+#Eliminamos vértices duplicados
+resultado = unique(nombre_vecinos)
 
 ```
-
-**i) Encuentra una clique de 4  nodos o más  pero no hallándolas todas sino escribiendo un programa que las busque y pare cuando encuentre una.**
-
-```{r}
-#find_clique = function(graph, clique_size){
-#g <- graph( edges=c(1,2, 2,3, 3,1), n=3, directed=F )
-#plot(g)
-  
-```
+La lista de vértices es: `r resultado`.
 
