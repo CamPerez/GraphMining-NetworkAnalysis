@@ -1,0 +1,38 @@
+---
+title: "Handout 2"
+output: pdf_document
+---
+
+* Name 1: Laura Basalo Tur
+* Name 2: Camila Pérez Arévalo
+* ...
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.align="center", echo=TRUE, warning=FALSE, message=FALSE,autodep = TRUE,cache=TRUE)
+library(knitr)
+library(printr)
+library(igraph)
+```
+
+We shall consider again the undirected Facebook friendship network considered in the last handout. The links in this network are contained in the file **facebook_sample_anon.txt**. Download it on your computer and upload it to R as a dataframe. Define an undirected graph with this list of edges.
+
+```{r cargarDatos}
+#Cargamos los datos del fichero .txt en un dataframe
+dataframe = read.table("data/facebook_sample_anon.txt",
+                       header = FALSE, 
+                       col.names = c("nodeA", "nodeB"),
+                       sep = " ")
+
+#Generamos el grafo no dirigido desde los datos del dataframe
+undirected_graph = graph_from_data_frame(dataframe, directed=F)
+
+```
+
+
+**1)**  It has been observed in many networks an association between "centrality" and "lethality," defined as the fatal disconnection of the network when nodes are removed. Let's study this association on this network.
+
+*a)* Repeat 1000 times the procedure of removing a random 0.1% of its set of nodes, and compute the average number of connected components of the resulting networks and the average fraction of the network represented by the largest component. Use **set.seed** to make your results reproducible.
+
+*b)* Now, compute the number of connected components and the fraction represented by the largest component of the networks obtained after removing the most central 0.1% of nodes, for the following centrality indices (of course, if the most central 0.1% of nodes for two indices are the same set of nodes, you need not waste your time considering twice the same network): *degree*; *closeness*; *betweenness*; *page.rank*. (**Hint**: It might be convenient to define first a function that removes a given set of nodes of this graph and computes the number of connected components and the fraction represented by the largest component of the resulting network; then you will only need to apply it to the required different sets of most central nodes.) Is it what you expected? 
+
+**2)** Now, consider the same graph as a directed one, and find the hubs and authorities scores. Compare with the page rank score. 
