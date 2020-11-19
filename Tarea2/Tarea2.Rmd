@@ -42,7 +42,7 @@ set.seed(4321)
 
 #Número de repeticiones
 n = 1000
-perc = (0.1/100)*1000
+perc = (0.1/100)*vcount(undirected_graph)
 avrg_connected = c()
 avrg_largest_component = c()
 g = undirected_graph
@@ -73,7 +73,7 @@ set.seed(4321)
 
 #Número de repeticiones
 n = 50
-perc = (0.1/100)*1000
+perc = (0.1/100)*vcount(undirected_graph)
 avrg_connected = c()
 avrg_largest_component = c()
 g = undirected_graph
