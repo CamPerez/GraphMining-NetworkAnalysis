@@ -5,6 +5,7 @@ output: pdf_document
 
 * Name 1: Laura Basalo Tur
 * Name 2: Camila Pérez Arévalo
+* Name 3: Josep Roman
 * ...
 
 ```{r global_options, include=FALSE}
@@ -40,26 +41,25 @@ undirected_graph = graph_from_data_frame(dataframe, directed=F)
 set.seed(4321)
 
 #Número de repeticiones
-n = 2
+n = 1000
 perc = (0.1/100)*1000
 avrg_connected = c()
 avrg_largest_component = c()
 g = undirected_graph
 
-compute_graph_random = function(g, n){
+compute_graph_random = function(g, n, perc){
   for(i in 1:n+1){
-    sample = sample(V(g), perc)
-    g = delete_vertices(g, sample)
+    v_to_delete = sample(V(g), perc)
+    g = delete_vertices(g, v_to_delete)
     avrg_connected = c(avrg_connected, count_components(g))
     avrg_largest_component = c(avrg_largest_component, max(components(g)$csize))
   }
 
-  sprintf("Media componentes conectos %s", mean(avrg_connected))
-  sprintf("Media componente más largo conecto %s", mean(avrg_largest_component))
+  return(list(mean(avrg_connected), mean(avrg_largest_component)))
 }
 
 
-compute_graph_random(g, n)
+compute_graph_random(g, n, perc)
 
 ```
 
@@ -78,23 +78,18 @@ avrg_connected = c()
 avrg_largest_component = c()
 g = undirected_graph
 
-compute_graph_degree = function(g, n){
+compute_graph_degree = function(g, n, perc){
   for(i in 1:n+1){
     
-    v_center = max(centr_degree(g)$res)
-    print("Pos nodo más degree")
-    print(v_center)
-    print("Nombre nodo más degree")
-    print(V(g)[1045])
-    g = delete_vertices(g, v_center)
+    v_to_delete = max(centr_degree(g)$res)
+    #TODO: Ordenar vector $res por score y coger el 0.1% de los primeros
+    g = delete_vertices(g, v_to_delete)
     avrg_connected = c(avrg_connected, count_components(g))
     avrg_largest_component = c(avrg_largest_component, max(components(g)$csize))
   }
 
   
   return(list(mean(avrg_connected), mean(avrg_largest_component)))
-  
-  
 }
 
 
