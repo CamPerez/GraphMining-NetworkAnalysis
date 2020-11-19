@@ -72,7 +72,7 @@ compute_graph_random(g, n, perc)
 set.seed(4321)
 
 #Número de repeticiones
-n = 50
+n = 1000
 perc = (0.1/100)*vcount(undirected_graph)
 avrg_connected = c()
 avrg_largest_component = c()
@@ -81,8 +81,8 @@ g = undirected_graph
 compute_graph_degree = function(g, n, perc){
   for(i in 1:n+1){
     
-    v_to_delete = max(centr_degree(g)$res)
-    #TODO: Ordenar vector $res por score y coger el 0.1% de los primeros
+    order_by_degree = order(centr_degree(g)$res)
+    v_to_delete = order_by_degree[1:perc]
     g = delete_vertices(g, v_to_delete)
     avrg_connected = c(avrg_connected, count_components(g))
     avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g))
@@ -100,9 +100,27 @@ compute_graph_degree(g, n)
 
 
 ```{r}
-#centr_clo()
-#centr_betw()
-#page_rank()
+#degree
+order_by_degree = order(centr_degree(undirected_graph)$res, decreasing = TRUE)
+v_to_delete = order_by_degree[1:perc]
+
+
+#closeness
+##TODO: Coger los valores de closeness y no el índice
+order_by_clos = order(centr_clo(undirected_graph), decreasing = TRUE)
+v_to_delete = order_by_clos[1:perc]
+
+
+#betweenness
+order_by_betwennes = order(centr_degree(undirected_graph)$res, decreasing = TRUE)
+v_to_delete = order_by_betwennes[1:perc]
+
+
+#page_rank
+order_by_pagerank = order(, decreasing = TRUE)
+v_to_delete = order_by_pagerank[1:perc]
+##PAGE_RANK devuelve vector
+page_rank(g, directed = FALSE, algo = "power")
 ```
 
 
@@ -113,5 +131,13 @@ compute_graph_degree(g, n)
 
 #Generamos el grafo dirigido desde los datos del dataframe
 directed_graph = graph_from_data_frame(dataframe, directed=T)
+
+#Hub/Authorities
+hub_score = hub_score(directed_graph)
+authority_score = authority_score(directed_graph)
+
+#PageRank
+page_rank(directed_graph, directed = TRUE, algo = "power")
+
 ```
 
