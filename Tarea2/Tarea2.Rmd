@@ -49,10 +49,10 @@ g = undirected_graph
 
 compute_graph_random = function(g, n, perc){
   for(i in 1:n+1){
-    v_to_delete = sample(V(g), perc)
+    v_to_delete = sample(V(g), perc) #Obtenemos el 0.1% de vértices random a eliminar
     g = delete_vertices(g, v_to_delete)
-    avrg_connected = c(avrg_connected, count_components(g))
-    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize))
+    avrg_connected = c(avrg_connected, count_components(g)) #Guardamos el número de componentes conexos
+    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) #Guardamos la fracción 
   }
 
   return(list(mean(avrg_connected), mean(avrg_largest_component)))
@@ -85,7 +85,7 @@ compute_graph_degree = function(g, n, perc){
     #TODO: Ordenar vector $res por score y coger el 0.1% de los primeros
     g = delete_vertices(g, v_to_delete)
     avrg_connected = c(avrg_connected, count_components(g))
-    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize))
+    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g))
   }
 
   
