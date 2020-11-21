@@ -58,10 +58,12 @@ compute_graph_random = function(g, n, perc){
     #Obtenemos el 0.1% de vértices aleatorios a eliminar
     v_to_delete = sample(V(g), perc) 
     g = delete_vertices(g, v_to_delete)
+    #Obtenemos información de los componentes del grafo
+    components = components(g)
     #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, count_components(g))
+    avrg_connected = c(avrg_connected, components$no)
     #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g)) 
   }
 
   result = list("Average number of connected components" = mean(avrg_connected),
@@ -103,10 +105,12 @@ compute_graph_degree = function(g, n, perc){
     order_by_degree = order(centr_degree(g)$res, decreasing = TRUE)
     v_to_delete = order_by_degree[1:perc]
     g = delete_vertices(g, v_to_delete)
+    #Obtenemos información de los componentes del grafo
+    components = components(g)
     #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, count_components(g))
+    avrg_connected = c(avrg_connected, components$no)
     #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g)) 
   }
 
   result = list("Average number of connected components" = mean(avrg_connected),
@@ -124,7 +128,7 @@ order_by_clos = order(centr_clo(undirected_graph)$res, decreasing = TRUE)
 v_to_delete = order_by_clos[1:perc]
 ```
 
-```{r apartadoB_Closeness_Full, echo = FALSE}
+```{r apartadoB_Closeness_Full, echo = FALSE, eval = FALSE}
 compute_graph_closeness = function(g, n, perc){
   
   #Inicializamos dos listas vacías donde se guardarán los datos a calcular
@@ -133,15 +137,25 @@ compute_graph_closeness = function(g, n, perc){
   #Calculamos el porcentaje de nodos a eliminar
   perc = (0.1/100)*vcount(g)
   
+  subgraph = g
+  
   for(i in 1:n+1){
     #Obtenemos el 0.1% de vértices a eliminar por cercanía
-    order_by_clos = order(centr_clo(g)$res, decreasing = TRUE)
+    order_by_clos = order(centr_clo(subgraph)$res, decreasing = TRUE)
     v_to_delete = order_by_clos[1:perc]
     g = delete_vertices(g, v_to_delete)
+    #names = V(g)[v_to_delete]$names
+    #g = delete_vertices(g, V(g)$names == names)
+    #Obtenemos información de los componentes del grafo
+    components = components(g)
     #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, count_components(g))
+    avrg_connected = c(avrg_connected, components$no)
     #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g))
+    
+    #Obtenemos subgrafo del componente más grande para calcular closeness sobre este componente
+    larg_component = which.max(components$csize)
+    subgraph = induced_subgraph(g, which(components$membership == larg_component))
   }
 
   result = list("Average number of connected components" = mean(avrg_connected),
@@ -173,10 +187,12 @@ compute_graph_betwennes = function(g, n, perc){
     order_by_betwennes = order(centr_betw(g)$res, decreasing = TRUE)
     v_to_delete = order_by_betwennes[1:perc]
     g = delete_vertices(g, v_to_delete)
+    #Obtenemos información de los componentes del grafo
+    components = components(g)
     #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, count_components(g))
+    avrg_connected = c(avrg_connected, components$no)
     #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g)) 
   }
 
   result = list("Average number of connected components" = mean(avrg_connected),
@@ -185,7 +201,7 @@ compute_graph_betwennes = function(g, n, perc){
 }
 
 #Ejecutamos la función del cálculo con el grafo no dirigido
-compute_graph_random(undirected_graph, n, perc)
+compute_graph_betwennes(undirected_graph, n, perc)
 ```
 
 
@@ -196,7 +212,7 @@ v_to_delete = order_by_pagerank[1:perc]
 ```
 
 ```{r apartadoB_PageRank_Full, echo = FALSE}
-compute_graph_random = function(g, n, perc){
+compute_graph_pagerank = function(g, n, perc){
   
   #Inicializamos dos listas vacías donde se guardarán los datos a calcular
   avrg_connected = c()
@@ -210,10 +226,12 @@ compute_graph_random = function(g, n, perc){
     order_by_pagerank = order(page_rank_result$vector, decreasing = TRUE)
     v_to_delete = order_by_pagerank[1:perc]
     g = delete_vertices(g, v_to_delete)
+    #Obtenemos información de los componentes del grafo
+    components = components(g)
     #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, count_components(g))
+    avrg_connected = c(avrg_connected, components$no)
     #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g)) 
   }
 
   result = list("Average number of connected components" = mean(avrg_connected),
@@ -222,11 +240,15 @@ compute_graph_random = function(g, n, perc){
 }
 
 #Ejecutamos la función del cálculo con el grafo no dirigido
-compute_graph_random(undirected_graph, n, perc)
+compute_graph_pagerank(undirected_graph, n, perc)
 ```
 
 
-COMENTARIOS
+Sí, esperabamos que la fracción del componente más largo, en el apartado b, fuese menor que en el anterior apartado ya que, en este caso se eliminan aquellos vértices que cuentan con un mayor grado. Es decir, se eliminan los vértices que cuentan con el mayor nombre de aristas de todo el grafo, por lo que sería más probable que el grafo se divida en más componentes y, como resultado, el tamaño del componente más largo se vea disminuido.
+
+A la hora de realizar el closeness nos aparecia el siguiente error: ***At centrality.c:2784 :closeness centrality is not well-defined for disconnected graphs***, lo que sucede es que esta función da error una vez existe la división de grafos. Por este motivo hemos aplicado una restricción en la cual por cada iteración
+elimine 4 vértices de el componente más largo. De esta manera se ha podido ejecutar el código sin que nos apareciese este error pero llega un momento en el cual
+los componentes son de tamaño 2 y 1 por lo que closeness deja de ejecutarse.
 
 
 &nbsp;
