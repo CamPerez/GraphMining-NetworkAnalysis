@@ -64,7 +64,9 @@ compute_graph_random = function(g, n, perc){
     avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
   }
 
-  return(list(mean(avrg_connected), mean(avrg_largest_component)))
+  result = list("Average number of connected components" = mean(avrg_connected),
+                "Average fraction by largest component" = mean(avrg_largest_component))
+  return(result)
 }
 
 #Ejecutamos la función del cálculo con el grafo no dirigido
@@ -87,25 +89,140 @@ order_by_degree = order(centr_degree(undirected_graph)$res, decreasing = TRUE)
 v_to_delete = order_by_degree[1:perc]
 ```
 
-```{r apartadoB_Degree_Full}
+```{r apartadoB_Degree_Full, echo = FALSE}
+compute_graph_degree = function(g, n, perc){
+  
+  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
+  avrg_connected = c()
+  avrg_largest_component = c()
+  #Calculamos el porcentaje de nodos a eliminar
+  perc = (0.1/100)*vcount(g)
+  
+  for(i in 1:n+1){
+    #Obtenemos el 0.1% de vértices a eliminar por grado
+    order_by_degree = order(centr_degree(g)$res, decreasing = TRUE)
+    v_to_delete = order_by_degree[1:perc]
+    g = delete_vertices(g, v_to_delete)
+    #Guardamos el número de componentes conexos
+    avrg_connected = c(avrg_connected, count_components(g))
+    #Guardamos la fracción del componente conexo más grande
+    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+  }
+
+  result = list("Average number of connected components" = mean(avrg_connected),
+                "Average fraction by largest component" = mean(avrg_largest_component))
+  return(result)
+}
+
+#Ejecutamos la función del cálculo con el grafo no dirigido
+compute_graph_degree(undirected_graph, n, perc)
 ```
+
 
 ```{r apartadoB_Closeness, eval=FALSE}
 order_by_clos = order(centr_clo(undirected_graph)$res, decreasing = TRUE)
 v_to_delete = order_by_clos[1:perc]
 ```
 
+```{r apartadoB_Closeness_Full, echo = FALSE}
+compute_graph_closeness = function(g, n, perc){
+  
+  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
+  avrg_connected = c()
+  avrg_largest_component = c()
+  #Calculamos el porcentaje de nodos a eliminar
+  perc = (0.1/100)*vcount(g)
+  
+  for(i in 1:n+1){
+    #Obtenemos el 0.1% de vértices a eliminar por cercanía
+    order_by_clos = order(centr_clo(g)$res, decreasing = TRUE)
+    v_to_delete = order_by_clos[1:perc]
+    g = delete_vertices(g, v_to_delete)
+    #Guardamos el número de componentes conexos
+    avrg_connected = c(avrg_connected, count_components(g))
+    #Guardamos la fracción del componente conexo más grande
+    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+  }
+
+  result = list("Average number of connected components" = mean(avrg_connected),
+                "Average fraction by largest component" = mean(avrg_largest_component))
+  return(result)
+}
+
+#Ejecutamos la función del cálculo con el grafo no dirigido
+compute_graph_closeness(undirected_graph, n, perc)
+```
+
+
 ```{r apartadoB_Betweenness, eval=FALSE}
-order_by_betwennes = order(centr_degree(undirected_graph)$res, decreasing = TRUE)
+order_by_betwennes = order(centr_betw(undirected_graph)$res, decreasing = TRUE)
 v_to_delete = order_by_betwennes[1:perc]
 ```
 
+```{r apartadoB_Betwennes_Full, echo = FALSE}
+compute_graph_betwennes = function(g, n, perc){
+  
+  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
+  avrg_connected = c()
+  avrg_largest_component = c()
+  #Calculamos el porcentaje de nodos a eliminar
+  perc = (0.1/100)*vcount(g)
+  
+  for(i in 1:n+1){
+    #Obtenemos el 0.1% de vértices a eliminar según intermediación
+    order_by_betwennes = order(centr_betw(g)$res, decreasing = TRUE)
+    v_to_delete = order_by_betwennes[1:perc]
+    g = delete_vertices(g, v_to_delete)
+    #Guardamos el número de componentes conexos
+    avrg_connected = c(avrg_connected, count_components(g))
+    #Guardamos la fracción del componente conexo más grande
+    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+  }
+
+  result = list("Average number of connected components" = mean(avrg_connected),
+                "Average fraction by largest component" = mean(avrg_largest_component))
+  return(result)
+}
+
+#Ejecutamos la función del cálculo con el grafo no dirigido
+compute_graph_random(undirected_graph, n, perc)
+```
+
+
 ```{r apartadoB_PageRank, eval=FALSE}
-order_by_pagerank = order(page_rank(undirected_graph, directed = FALSE, algo = "power")$vector, decreasing = TRUE)
+page_rank_result = page_rank(undirected_graph, directed = FALSE, algo = "power")
+order_by_pagerank = order(page_rank_result$vector, decreasing = TRUE)
 v_to_delete = order_by_pagerank[1:perc]
 ```
 
-```{r}
+```{r apartadoB_PageRank_Full, echo = FALSE}
+compute_graph_random = function(g, n, perc){
+  
+  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
+  avrg_connected = c()
+  avrg_largest_component = c()
+  #Calculamos el porcentaje de nodos a eliminar
+  perc = (0.1/100)*vcount(g)
+  
+  for(i in 1:n+1){
+    #Obtenemos el 0.1% de vértices a eliminar según intermediación
+    page_rank_result = page_rank(g, directed = FALSE, algo = "power")
+    order_by_pagerank = order(page_rank_result$vector, decreasing = TRUE)
+    v_to_delete = order_by_pagerank[1:perc]
+    g = delete_vertices(g, v_to_delete)
+    #Guardamos el número de componentes conexos
+    avrg_connected = c(avrg_connected, count_components(g))
+    #Guardamos la fracción del componente conexo más grande
+    avrg_largest_component = c(avrg_largest_component, max(components(g)$csize)/vcount(g)) 
+  }
+
+  result = list("Average number of connected components" = mean(avrg_connected),
+                "Average fraction by largest component" = mean(avrg_largest_component))
+  return(result)
+}
+
+#Ejecutamos la función del cálculo con el grafo no dirigido
+compute_graph_random(undirected_graph, n, perc)
 ```
 
 
