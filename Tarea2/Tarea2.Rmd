@@ -14,7 +14,7 @@ library(printr)
 library(igraph)
 ```
 
-We shall consider again the undirected Facebook friendship network considered in the last handout. The links in this network are contained in the file **facebook_sample_anon.txt**. Download it on your computer and upload it to R as a dataframe. Define an undirected graph with this list of edges.
+**We shall consider again the undirected Facebook friendship network considered in the last handout. The links in this network are contained in the file *facebook_sample_anon.txt*. Download it on your computer and upload it to R as a dataframe. Define an undirected graph with this list of edges.**
 
 ```{r cargarDatos}
 #Cargamos los datos del fichero .txt en un dataframe
@@ -35,7 +35,7 @@ undirected_graph = graph_from_data_frame(dataframe, directed=F)
 
 **1) It has been observed in many networks an association between "centrality" and "lethality," defined as the fatal disconnection of the network when nodes are removed. Let's study this association on this network.**
 
-*a)* Repeat 1000 times the procedure of removing a random 0.1% of its set of nodes, and compute the average number of connected components of the resulting networks and the average fraction of the network represented by the largest component. Use **set.seed** to make your results reproducible.
+**a) Repeat 1000 times the procedure of removing a random 0.1% of its set of nodes, and compute the average number of connected components of the resulting networks and the average fraction of the network represented by the largest component. Use *set.seed* to make your results reproducible.**
 
 
 ```{r apartadoA}
@@ -51,7 +51,6 @@ compute_graph_random = function(g, n, perc){
   #Inicializamos dos listas vacías donde se guardarán los datos a calcular
   avrg_connected = c()
   avrg_largest_component = c()
-  nodos = c()
   #Calculamos el porcentaje de nodos a eliminar
   perc = (0.1/100)*vcount(g)
   
@@ -62,12 +61,12 @@ compute_graph_random = function(g, n, perc){
     #Obtenemos información de los componentes del grafo
     components = components(g1)
     #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, components$no)
+    avrg_num_components = c(avrg_connected, components$no)
     #Guardamos la fracción del componente conexo más grande
     avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g1)) 
   }
 
-  result = list("Average number of connected components" = mean(avrg_connected),
+  result = list("Average number of connected components" = mean(avrg_num_components),
                 "Average fraction by largest component" = mean(avrg_largest_component))
   return(result)
 }
@@ -76,186 +75,83 @@ compute_graph_random = function(g, n, perc){
 compute_graph_random(undirected_graph, n, perc)
 
 ```
-COMENTARIOS
+Como podemos observar en los resultados y después de un cálculo de `r n` iteraciones, la media del número de componentes en el grafo es de 1, mientras que la media de la fracción de representada por el componente más grande de la red es de 0.9999527. En el apartado siguiente realizaremos un análisis de estos resultados y su comparación eliminando vértices escogidos con diferentes métricas de centralización.
 
 
 
 &nbsp;
 
 
-*b)* Now, compute the number of connected components and the fraction represented by the largest component of the networks obtained after removing the most central 0.1% of nodes, for the following centrality indices (of course, if the most central 0.1% of nodes for two indices are the same set of nodes, you need not waste your time considering twice the same network): *degree*; *closeness*; *betweenness*; *page.rank*. (**Hint**: It might be convenient to define first a function that removes a given set of nodes of this graph and computes the number of connected components and the fraction represented by the largest component of the resulting network; then you will only need to apply it to the required different sets of most central nodes.) Is it what you expected? 
+**b) Now, compute the number of connected components and the fraction represented by the largest component of the networks obtained after removing the most central 0.1% of nodes, for the following centrality indices (of course, if the most central 0.1% of nodes for two indices are the same set of nodes, you need not waste your time considering twice the same network): *degree*; *closeness*; *betweenness*; *page.rank*. (*Hint*: It might be convenient to define first a function that removes a given set of nodes of this graph and computes the number of connected components and the fraction represented by the largest component of the resulting network; then you will only need to apply it to the required different sets of most central nodes.) Is it what you expected? **
+
+Para calcular el número de componentes y la fracción representada por el componente más grande de la red después de eliminar el 0.1% de los vértices o nodos más centrales según las diferentes métricas, creamos una función que recoge como parámetros el grafo sobre el cuál se han de borrar los vértices y el vector que representa los vértices a eliminar según las diferentes métricas:
+
+```{r apartadoB}
+remove_nodes = function(g, vertices){
+  g1 = delete_vertices(g, vertices)
+  num_components = components(g1)$no
+  frac_largest_component = max(components(g1)$csize)/vcount(g1)
+  return(list("Number of connected components" = num_components,
+              "Fraction represented by the largest component" = frac_largest_component))
+}
+
+#Porcentaje de nodos a eliminar
+perc = (0.1/100)*vcount(undirected_graph)
+```
 
 
-
-```{r apartadoB_Degree, eval=FALSE}
+La primera métrica a analizar será la de *degree*, la cual nos indica el número de grados de cada vértice del grafo, es decir, su número de enlaces.
+```{r apartadoB_degree}
 order_by_degree = order(centr_degree(undirected_graph)$res, decreasing = TRUE)
-v_to_delete = order_by_degree[1:perc]
-```
-
-```{r apartadoB_Degree_Full, echo = FALSE}
-compute_graph_degree = function(g, n, perc){
-  
-  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
-  avrg_connected = c()
-  avrg_largest_component = c()
-  #Calculamos el porcentaje de nodos a eliminar
-  perc = (0.1/100)*vcount(g)
-  
-  for(i in 1:n+1){
-    #Obtenemos el 0.1% de vértices a eliminar por grado
-    order_by_degree = order(centr_degree(g)$res, decreasing = TRUE)
-    v_to_delete = order_by_degree[1:perc]
-    g = delete_vertices(g, v_to_delete)
-    #Obtenemos información de los componentes del grafo
-    components = components(g)
-    #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, components$no)
-    #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g)) 
-  }
-
-  result = list("Average number of connected components" = mean(avrg_connected),
-                "Average fraction by largest component" = mean(avrg_largest_component))
-  return(result)
-}
-
-#Ejecutamos la función del cálculo con el grafo no dirigido
-compute_graph_degree(undirected_graph, n, perc)
+v_to_delete = order_by_degree[1:perc] #100 1535 1723 3156
+remove_nodes(undirected_graph, v_to_delete)
 ```
 
 
-```{r apartadoB_Closeness, eval=FALSE}
+La siguiente métrica a analizar es la de *closeness*, que nos devuelve para cada vértice el número de pasos requeridos para acceder a todos los demás vértices del grafo.
+```{r apartadoB_closeness}
 order_by_clos = order(centr_clo(undirected_graph)$res, decreasing = TRUE)
-v_to_delete = order_by_clos[1:perc]
-```
-
-```{r apartadoB_Closeness_Full, echo = FALSE, eval = FALSE}
-compute_graph_closeness = function(g, n, perc){
-  
-  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
-  avrg_connected = c()
-  avrg_largest_component = c()
-  #Calculamos el porcentaje de nodos a eliminar
-  perc = (0.1/100)*vcount(g)
-  
-  subgraph = g
-  
-  for(i in 1:n+1){
-    #Obtenemos el 0.1% de vértices a eliminar por cercanía
-    order_by_clos = order(centr_clo(subgraph)$res, decreasing = TRUE)
-    v_to_delete = order_by_clos[1:perc]
-    g = delete_vertices(g, v_to_delete)
-    #names = V(g)[v_to_delete]$names
-    #g = delete_vertices(g, V(g)$names == names)
-    #Obtenemos información de los componentes del grafo
-    components = components(g)
-    #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, components$no)
-    #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g))
-    
-    #Obtenemos subgrafo del componente más grande para calcular closeness sobre este componente
-    larg_component = which.max(components$csize)
-    subgraph = induced_subgraph(g, which(components$membership == larg_component))
-  }
-
-  result = list("Average number of connected components" = mean(avrg_connected),
-                "Average fraction by largest component" = mean(avrg_largest_component))
-  return(result)
-}
-
-#Ejecutamos la función del cálculo con el grafo no dirigido
-compute_graph_closeness(undirected_graph, n, perc)
+v_to_delete = order_by_clos[1:perc] #100  52 366 493
+remove_nodes(undirected_graph, v_to_delete)
 ```
 
 
-```{r apartadoB_Betweenness, eval=FALSE}
+La métrica *betwennes* nos indica para cada vértice el número de veces que este actúa como puente a lo largo del camino más corto entre dos nodos del grafo.
+```{r apartadoB_betwennes}
 order_by_betwennes = order(centr_betw(undirected_graph)$res, decreasing = TRUE)
 v_to_delete = order_by_betwennes[1:perc]
+#100 1535 3156 1723 -> Same nodes as with the Degree metric.
+remove_nodes(undirected_graph, v_to_delete)
 ```
 
-```{r apartadoB_Betwennes_Full, echo = FALSE}
-compute_graph_betwennes = function(g, n, perc){
-  
-  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
-  avrg_connected = c()
-  avrg_largest_component = c()
-  #Calculamos el porcentaje de nodos a eliminar
-  perc = (0.1/100)*vcount(g)
-  
-  for(i in 1:n+1){
-    #Obtenemos el 0.1% de vértices a eliminar según intermediación
-    order_by_betwennes = order(centr_betw(g)$res, decreasing = TRUE)
-    v_to_delete = order_by_betwennes[1:perc]
-    g = delete_vertices(g, v_to_delete)
-    #Obtenemos información de los componentes del grafo
-    components = components(g)
-    #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, components$no)
-    #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g)) 
-  }
+Por último, hacemos el cálculo utilizando la métrica *Page Rank*, la cual proporcionar a cada vértice una puntuación según el número de aristas entrantes que este posee y de la calidad de los vértices de los cuales provienen dichos enlaces.
 
-  result = list("Average number of connected components" = mean(avrg_connected),
-                "Average fraction by largest component" = mean(avrg_largest_component))
-  return(result)
-}
-
-#Ejecutamos la función del cálculo con el grafo no dirigido
-compute_graph_betwennes(undirected_graph, n, perc)
-```
-
-
-```{r apartadoB_PageRank, eval=FALSE}
+```{r apartadoB_pagerank}
 page_rank_result = page_rank(undirected_graph, directed = FALSE, algo = "power")
 order_by_pagerank = order(page_rank_result$vector, decreasing = TRUE)
-v_to_delete = order_by_pagerank[1:perc]
-```
-
-```{r apartadoB_PageRank_Full, echo = FALSE}
-compute_graph_pagerank = function(g, n, perc){
-  
-  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
-  avrg_connected = c()
-  avrg_largest_component = c()
-  #Calculamos el porcentaje de nodos a eliminar
-  perc = (0.1/100)*vcount(g)
-  
-  for(i in 1:n+1){
-    #Obtenemos el 0.1% de vértices a eliminar según intermediación
-    page_rank_result = page_rank(g, directed = FALSE, algo = "power")
-    order_by_pagerank = order(page_rank_result$vector, decreasing = TRUE)
-    v_to_delete = order_by_pagerank[1:perc]
-    g = delete_vertices(g, v_to_delete)
-    #Obtenemos información de los componentes del grafo
-    components = components(g)
-    #Guardamos el número de componentes conexos
-    avrg_connected = c(avrg_connected, components$no)
-    #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g)) 
-  }
-
-  result = list("Average number of connected components" = mean(avrg_connected),
-                "Average fraction by largest component" = mean(avrg_largest_component))
-  return(result)
-}
-
-#Ejecutamos la función del cálculo con el grafo no dirigido
-compute_graph_pagerank(undirected_graph, n, perc)
+v_to_delete = order_by_pagerank[1:perc] # 3156  100 1535    1
+remove_nodes(undirected_graph, v_to_delete)
 ```
 
 
-Sí, esperabamos que la fracción del componente más largo, en el apartado b, fuese menor que en el anterior apartado ya que, en este caso se eliminan aquellos vértices que cuentan con un mayor grado. Es decir, se eliminan los vértices que cuentan con el mayor nombre de aristas de todo el grafo, por lo que sería más probable que el grafo se divida en más componentes y, como resultado, el tamaño del componente más largo se vea disminuido.
+Es de esperar que, en el apartado A, al eliminar aleatoriamente una fracción de los vértices de un grafo el número de componentes, en media, se mantenga sobre 1. Esto se debe a que la mayoría de los nodos eliminados no tienen una importancia significativa para la conectividad del grafo. 
 
-A la hora de realizar el closeness nos aparecia el siguiente error: ***At centrality.c:2784 :closeness centrality is not well-defined for disconnected graphs***, lo que sucede es que esta función da error una vez existe la división de grafos. Por este motivo hemos aplicado una restricción en la cual por cada iteración
-elimine 4 vértices de el componente más largo. De esta manera se ha podido ejecutar el código sin que nos apareciese este error pero llega un momento en el cual
-los componentes son de tamaño 2 y 1 por lo que closeness deja de ejecutarse.
+Por otro lado y, según vemos en los resultados del apartado B, los nodos de mayor grado tienen la función de conectores dentro del grafo,  por lo que si los vértices eliminados son los de mayor grado, un elevado número de conexiones se eliminarán, provocando la división del grafo en varias componentes, en este caso 41. 
+
+Lo mismo se puede aplicar para las otras métricas analizadas, *Closeness* y *Betweennes*, ambas miden la centralidad de los nodos por lo que los vértices con un valor más elevado de las anteriores propiedades será un nodo con elevada influencia sobre la conectividad de los otros nodos en el grafo. Las métricas son tan similares que los nodos con valores más elevados de betweennes y degree son los mismos.
+
+En el caso del *PageRank* los nodos son evaluados según su grado de aristas entrantes, además de la calidad de los nodos que forman parte de estas aristas entrantes. Esta métrica se entiende como: *partiendo de nodos aleatorios y siguiendo caminos aleatorios cuáles son los nodos del grafo por los que se pasaría con más frecuencia*. De este modo, si eliminamos los nodos con mayor frecuencia de paso, resulta aún mayor la desconexión de la red, en este caso aparecen 52 componentes conectadas.
+
+El componente conexo más grande eliminando los nodos con mayor valor de $PR$ tiene más de 20 nodos menos que el correspondiente eliminando los nodos de mayor grado o de mayor $CLC$.
+
+En cuanto a la media de la fracción del componente más largo, esperabamos que esta, en el apartado b, fuese menor que en el anterior apartado ya que, en este caso se eliminan aquellos vértices que cuentan con un mayor grado. Es decir, se eliminan los vértices que cuentan con el mayor nombre de aristas de todo el grafo, por lo que sería más probable que el grafo se divida en más componentes y, como resultado, el tamaño del componente más largo se vea disminuido.
+
 
 
 &nbsp;
 
 
-**2)** Now, consider the same graph as a directed one, and find the hubs and authorities scores. Compare with the page rank score. 
+**2) Now, consider the same graph as a directed one, and find the hubs and authorities scores. Compare with the page rank score.** 
 
 ```{r ejercicio2, results="hide"}
 
@@ -267,7 +163,8 @@ hub_score = hub_score(directed_graph)
 authority_score = authority_score(directed_graph)
 
 #PageRank
-page_rank(directed_graph, directed = TRUE, algo = "power")
+page_rank_res = page_rank(directed_graph, directed = TRUE, algo = "power")
+page_rank_res$value
 
 ```
 
