@@ -1,0 +1,164 @@
+---
+title: "Untitled"
+author: "Josep R.C."
+date: "11/22/2020"
+output: html_document
+---
+---
+title: 'Entrega: Tarea 2'
+author: "Laura Basalo Tur, Camila Pérez Arévalo, Josep Roman Cardell"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.align="center", echo=TRUE, warning=FALSE, message=FALSE,autodep = TRUE,cache=TRUE)
+library(knitr)
+library(printr)
+library(igraph)
+```
+
+We shall consider again the undirected Facebook friendship network considered in the last handout. The links in this network are contained in the file **facebook_sample_anon.txt**. Download it on your computer and upload it to R as a dataframe. Define an undirected graph with this list of edges.
+
+```{r cargarDatos}
+#Cargamos los datos del fichero .txt en un dataframe
+dataframe = read.table("data/facebook_sample_anon.txt",
+                       header = FALSE, 
+                       col.names = c("nodeA", "nodeB"),
+                       sep = " ")
+
+#Generamos el grafo no dirigido desde los datos del dataframe
+undirected_graph = graph_from_data_frame(dataframe, directed=F)
+
+```
+
+
+&nbsp;
+
+
+
+**1) It has been observed in many networks an association between "centrality" and "lethality," defined as the fatal disconnection of the network when nodes are removed. Let's study this association on this network.**
+
+*a)* Repeat 1000 times the procedure of removing a random 0.1% of its set of nodes, and compute the average number of connected components of the resulting networks and the average fraction of the network represented by the largest component. Use **set.seed** to make your results reproducible.
+
+
+```{r apartadoA}
+
+#Indicamos la semilla a utilizar para que no cambien los resultados:
+set.seed(4321)
+
+#Número de repeticiones
+n = 1000
+
+compute_graph_random = function(g, n, perc){
+  
+  #Inicializamos dos listas vacías donde se guardarán los datos a calcular
+  avrg_connected = c()
+  avrg_largest_component = c()
+  nodos = c()
+  #Calculamos el porcentaje de nodos a eliminar
+  perc = (0.1/100)*vcount(g)
+  
+  for(i in 1:n+1){
+    #Obtenemos el 0.1% de vértices aleatorios a eliminar
+    v_to_delete = sample(V(g), perc) 
+    g1 = delete_vertices(g, v_to_delete)
+    #Obtenemos información de los componentes del grafo
+    components = components(g1)
+    #Guardamos el número de componentes conexos
+    avrg_connected = c(avrg_connected, components$no)
+    #Guardamos la fracción del componente conexo más grande
+    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g1)) 
+  }
+
+  result = list("Average number of connected components" = mean(avrg_connected),
+                "Average fraction by largest component" = mean(avrg_largest_component))
+  return(result)
+}
+
+#Ejecutamos la función del cálculo con el grafo no dirigido
+compute_graph_random(undirected_graph, n, perc)
+
+```
+COMENTARIOS
+
+
+
+&nbsp;
+
+
+*b)* Now, compute the number of connected components and the fraction represented by the largest component of the networks obtained after removing the most central 0.1% of nodes, for the following centrality indices (of course, if the most central 0.1% of nodes for two indices are the same set of nodes, you need not waste your time considering twice the same network): *degree*; *closeness*; *betweenness*; *page.rank*. (**Hint**: It might be convenient to define first a function that removes a given set of nodes of this graph and computes the number of connected components and the fraction represented by the largest component of the resulting network; then you will only need to apply it to the required different sets of most central nodes.) Is it what you expected? 
+
+
+```{r apartadoB}
+#Función que elimina el set de vertices sobre el grafo completo y calcula el número de componentes conectados y la fracción del componente más grande en función del grafo completo.
+remove_nodes <- function(g, vertices){
+  g1 = delete_vertices(g, vertices)
+  num_components = components(g1)$no
+  frac_largest_component = max(components(g1)$csize)/vcount(g1)
+  return(list("Number of connected components" = num_components,
+              "Fraction represented by the largest component of the network" = frac_largest_component))
+}
+
+perc = (0.1/100)*vcount(undirected_graph)
+
+#Degree
+order_by_degree = order(centr_degree(undirected_graph)$res, decreasing = TRUE)
+v_to_delete = order_by_degree[1:perc] #100 1535 1723 3156
+remove_nodes(g,v_to_delete)
+
+#Closeness
+
+order_by_clos = order(centr_clo(undirected_graph)$res, decreasing = TRUE)
+v_to_delete = order_by_clos[1:perc] #100  52 366 493
+remove_nodes(g,v_to_delete)
+
+#Betweenness
+
+order_by_betwennes = order(centr_betw(undirected_graph)$res, decreasing = TRUE)
+v_to_delete = order_by_betwennes[1:perc] #100 1535 3156 1723 -> Same nodes as with the Degree metric.
+
+#PageRank
+
+page_rank_result = page_rank(undirected_graph, directed = FALSE, algo = "power")
+order_by_pagerank = order(page_rank_result$vector, decreasing = TRUE)
+v_to_delete = order_by_pagerank[1:perc] # 3156  100 1535    1
+remove_nodes(g,v_to_delete)
+
+```
+```{r}
+0.9972684*(vcount(undirected_graph)-4) #Degree, Betweenness, Closenness
+0.991557*(vcount(undirected_graph)-4) #PR
+```
+Es de esperar que al eliminar aleatoriamente una fracción de los vertices de un grafo el número de componentes, en media, se mantenga sobre 1. Eso es porque la mayoría de los nodos no tinene una importancia significativa para la conectividad del grafo. Luego, los nodos de mayor grado tinene la función de connectores dentro del grafo,  por lo que si son los de mayor grado los nodos eliminados, un mayor número de conexiones se eliminarán, provocando la división del grafo en varías componentes, en este caso 12. Lo mismo se puede aplicar para las otras metricas, *Closeness* y *Betweennes*, ambas miden la centralidad de los nodos por lo que los nodos con un valor más elevado de las anteriores propiedades será un nodo con elevada influencia sobre la conectividad de los otros nodes en el grafo. Son las metricas tan similares que los nodos con valores más elevados de betweennes y degree son los mismos.
+
+En el caso del *PageRank* los nodos són evaluados según su grado de aristas entrantes, además de la calidad de los nodos que forman parte de estas aristas entrantes. Esta métrica se entiende como, partiendo de nodos aleatorios y siguiendo caminos aleatorios cuales son los nodos del grafo por los que se pasaría con más frecuencia. De este modo, si eliminamos los nodos con mayor frecuencia de paso, resulta aún mayor la desconexóin dela red, en este caso aparecen 30 componentes connectadas.
+
+El componente connexo más grande eliminando los nodos con mayor valo de $PR$ tiene más de 20 nodos menos que el correspondiente eliminando los nodos de mayor grado o de mayor $CLC$.
+
+
+Sí, esperabamos que la fracción del componente más largo, en el apartado b, fuese menor que en el anterior apartado ya que, en este caso se eliminan aquellos vértices que cuentan con un mayor grado. Es decir, se eliminan los vértices que cuentan con el mayor nombre de aristas de todo el grafo, por lo que sería más probable que el grafo se divida en más componentes y, como resultado, el tamaño del componente más largo se vea disminuido.
+
+
+
+&nbsp;
+
+
+**2)** Now, consider the same graph as a directed one, and find the hubs and authorities scores. Compare with the page rank score. 
+
+```{r ejercicio2, results="hide"}
+
+#Generamos el grafo dirigido desde los datos del dataframe
+directed_graph = graph_from_data_frame(dataframe, directed=T)
+
+#Hub/Authorities
+hub_score = hub_score(directed_graph)
+authority_score = authority_score(directed_graph)
+
+#PageRank
+page_rank(directed_graph, directed = TRUE, algo = "power")
+
+```
+

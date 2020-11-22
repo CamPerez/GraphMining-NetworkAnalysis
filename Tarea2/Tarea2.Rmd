@@ -51,19 +51,20 @@ compute_graph_random = function(g, n, perc){
   #Inicializamos dos listas vacías donde se guardarán los datos a calcular
   avrg_connected = c()
   avrg_largest_component = c()
+  nodos = c()
   #Calculamos el porcentaje de nodos a eliminar
   perc = (0.1/100)*vcount(g)
   
   for(i in 1:n+1){
     #Obtenemos el 0.1% de vértices aleatorios a eliminar
     v_to_delete = sample(V(g), perc) 
-    g = delete_vertices(g, v_to_delete)
+    g1 = delete_vertices(g, v_to_delete)
     #Obtenemos información de los componentes del grafo
-    components = components(g)
+    components = components(g1)
     #Guardamos el número de componentes conexos
     avrg_connected = c(avrg_connected, components$no)
     #Guardamos la fracción del componente conexo más grande
-    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g)) 
+    avrg_largest_component = c(avrg_largest_component, max(components$csize)/vcount(g1)) 
   }
 
   result = list("Average number of connected components" = mean(avrg_connected),
