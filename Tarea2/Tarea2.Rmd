@@ -140,11 +140,24 @@ Por otro lado y, según vemos en los resultados del apartado B, los nodos de may
 
 Lo mismo se puede aplicar para las otras métricas analizadas, *Closeness* y *Betweennes*, ambas miden la centralidad de los nodos por lo que los vértices con un valor más elevado de las anteriores propiedades será un nodo con elevada influencia sobre la conectividad de los otros nodos en el grafo. Las métricas son tan similares que los nodos con valores más elevados de betweennes y degree son los mismos.
 
-En el caso del *PageRank* los nodos son evaluados según su grado de aristas entrantes, además de la calidad de los nodos que forman parte de estas aristas entrantes. Esta métrica se entiende como: *partiendo de nodos aleatorios y siguiendo caminos aleatorios cuáles son los nodos del grafo por los que se pasaría con más frecuencia*. De este modo, si eliminamos los nodos con mayor frecuencia de paso, resulta aún mayor la desconexión de la red, en este caso aparecen 52 componentes conectadas.
+En el caso del *PageRank* los nodos son evaluados según su grado de aristas entrantes, además de la calidad de los nodos que forman parte de estas aristas entrantes. Esta métrica se entiende como: *partiendo de nodos aleatorios y siguiendo caminos aleatorios cuáles son los nodos del grafo por los que se pasaría con más frecuencia*. De este modo, si eliminamos los nodos con mayor frecuencia de paso, resulta aún mayor la desconexión de la red ya que en este caso aparecen 52 componentes conectadas.
 
-El componente conexo más grande eliminando los nodos con mayor valor de $PR$ tiene más de 20 nodos menos que el correspondiente eliminando los nodos de mayor grado o de mayor $CLC$.
 
-En cuanto a la media de la fracción del componente más largo, esperabamos que esta, en el apartado b, fuese menor que en el anterior apartado ya que, en este caso se eliminan aquellos vértices que cuentan con un mayor grado. Es decir, se eliminan los vértices que cuentan con el mayor nombre de aristas de todo el grafo, por lo que sería más probable que el grafo se divida en más componentes y, como resultado, el tamaño del componente más largo se vea disminuido.
+Respecto a la fracción del componente más grande, realizamos el siguiente cálculo para visualizar de manera más clara el número de vértices que lo formarían:
+```{r}
+#Resultado eliminado vértices aleatorios
+0.9999527*(vcount(undirected_graph)-4)
+#Resultados métricas Degree y Betweennes
+0.9878563*(vcount(undirected_graph)-4) 
+#Resultado métrica Closeness
+0.9972739*(vcount(undirected_graph)-4)
+#Resultado métrica PageRank
+0.983891*(vcount(undirected_graph)-4)
+```
+
+El componente conexo más grande eliminando los nodos con mayor valor de $PR$ tiene unos 50 nodos menos que el correspondiente eliminando los nodos de mayor $CLC$, por lo que vemos que con PageRank se han eliminado vértices que proporcionaban más conexión al grafo.
+
+En cuanto al resultado obtenido en el apartado A (elminando vértices aleatorios) esperábamos que este fuese el mayor que utilizando las métricas de centralidad para eliminar, ya que con estas últimas se eliminan aquellos vértices que cuentan con una mayor conectivadad. Es decir, se eliminan los vértices que haría más probable que el grafo se divida en más componentes y, como resultado, el tamaño del componente más largo se vea disminuido.
 
 
 
