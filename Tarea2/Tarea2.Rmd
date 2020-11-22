@@ -166,19 +166,32 @@ En cuanto al resultado obtenido en el apartado A (elminando vértices aleatorios
 
 **2) Now, consider the same graph as a directed one, and find the hubs and authorities scores. Compare with the page rank score.** 
 
-```{r ejercicio2, results="hide"}
-
+```{r}
 #Generamos el grafo dirigido desde los datos del dataframe
 directed_graph = graph_from_data_frame(dataframe, directed=T)
+```
 
-#Hub/Authorities
+
+A continuación calculamos el algoritmo HIITS con el grafo dirigido. Este algoritmo nos devuelve dos vectores de puntuaciones: hub y authorities.
+
+```{r ejercicio2}
+#Hub vector
 hub_score = hub_score(directed_graph)
+head(hub_score$vector)
+#Authorities vector
 authority_score = authority_score(directed_graph)
-
-#PageRank
-page_rank_res = page_rank(directed_graph, directed = TRUE, algo = "power")
+head(authority_score$vector)
 
 ```
-Tanto el algoritmo de PageRank como el de HIITS son utilizados para analizar los enlaces de un grafo y dar una puntuación a cada vértice de este. No obstante, entre ellos se pueden observar algunas diferencias como el alcance de nodos utilizados para el cálculo. Mientras HITS se aplica a un subgrafo o a los vecinos de un nodo, PageRank se aplica al grafo entero. De la misma forma, HITS trabaja con las aristas de entrada y los de salida, y PageRank solo a las aristas entrantes.
+
+
+El siguiente a calcular es el algoritmo PageRank, el cuál tiene en cuenta las aristas entrantes.
+```{r}
+page_rank_res = page_rank(directed_graph, directed = TRUE)
+head(page_rank_res$vector)
+```
+
+
+Tanto el algoritmo de PageRank como el de HIITS son utilizados para analizar los enlaces de un grafo y dar una puntuación a cada vértice de este. No obstante, entre ellos se pueden observar algunas diferencias como el alcance de nodos utilizados para el cálculo. Mientras HITS se aplica a un subgrafo o a los vecinos de un nodo, PageRank se aplica al grafo entero. De la misma forma, HITS trabaja dando puntuación a cada nodo según las aristas de entrada (*hub_score*) y los de salida (*hub_authority*), y PageRank solo a las aristas entrantes.
 
 En relación a tiempo de ejecución, HITS realiza los cálculos en tiempo búsqueda, pero PageRank realiza el cálculo de un nodo en el momento de indexación, lo que lo hace más eficiente en términos de complejidad. 
