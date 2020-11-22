@@ -177,18 +177,17 @@ A continuación calculamos el algoritmo HIITS con el grafo dirigido. Este algori
 ```{r ejercicio2}
 #Hub vector
 hub_score = hub_score(directed_graph)
-head(hub_score$vector)
+head(hub_score$vector,10) # Top 10 PR
 #Authorities vector
 authority_score = authority_score(directed_graph)
-head(authority_score$vector)
-
+head(authority_score$vector,10) # Top 10 PR
 ```
 
 
 El siguiente a calcular es el algoritmo PageRank, el cuál tiene en cuenta las aristas entrantes.
 ```{r}
-page_rank_res = page_rank(directed_graph, directed = TRUE)
-head(page_rank_res$vector)
+PR = page_rank(directed_graph, directed = TRUE) #iteraciones = 1000
+head(PR$vector, decreasing = TRUE,10) # Top 10 PR
 ```
 
 

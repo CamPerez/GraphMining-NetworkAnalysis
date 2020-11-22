@@ -157,6 +157,9 @@ directed_graph = graph_from_data_frame(dataframe, directed=T)
 #Hub/Authorities
 hub_score = hub_score(directed_graph) #iteraciones = 20
 authority_score = authority_score(directed_graph) #iteraciones = 20
+head(order(hub_score$vector, decreasing = TRUE),10) # Top 10 PR
+head(order(authority_score$vector, decreasing = TRUE),10) # Top 10 PR
+
 
 #PageRank
 PR = page_rank(directed_graph, directed = TRUE, algo = "power") #iteraciones = 1000
