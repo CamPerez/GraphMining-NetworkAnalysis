@@ -191,6 +191,6 @@ head(PR$vector, decreasing = TRUE,10) # Top 10 PR
 ```
 
 
-Tanto el algoritmo de PageRank como el de HIITS son utilizados para analizar los enlaces de un grafo y dar una puntuación a cada vértice de este. No obstante, entre ellos se pueden observar algunas diferencias como el alcance de nodos utilizados para el cálculo. Mientras HITS se aplica a un subgrafo o a los vecinos de un nodo, PageRank se aplica al grafo entero. De la misma forma, HITS trabaja dando puntuación a cada nodo según las aristas de entrada (*hub_score*) y los de salida (*hub_authority*), y PageRank solo a las aristas entrantes.
+Tanto el algoritmo de PageRank como el de HITS son utilizados para analizar los enlaces de un grafo y dar una puntuación a cada vértice de este. No obstante, entre ellos se pueden observar algunas diferencias como el alcance de nodos utilizados para el cálculo. Mientras HITS se aplica a un subgrafo o a los vecinos de un nodo, PageRank se aplica al grafo entero. De la misma forma, HITS trabaja dando puntuación a cada nodo según las aristas de entrada (*hub_score*) y los de salida (*hub_authority*), y PageRank solo a las aristas entrantes.
 
 En relación a tiempo de ejecución, HITS realiza los cálculos en tiempo búsqueda, pero PageRank realiza el cálculo de un nodo en el momento de indexación, lo que lo hace más eficiente en términos de complejidad. 
