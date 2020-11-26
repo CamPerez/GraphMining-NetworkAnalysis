@@ -157,7 +157,7 @@ Respecto a la fracción del componente más grande, realizamos el siguiente cál
 
 El componente conexo más grande eliminando los nodos con mayor valor de $PR$ tiene unos 50 nodos menos que el correspondiente eliminando los nodos de mayor $CLC$, por lo que vemos que con PageRank se han eliminado vértices que proporcionaban más conexión al grafo.
 
-En cuanto al resultado obtenido en el apartado A (elminando vértices aleatorios) esperábamos que este fuese el mayor que utilizando las métricas de centralidad para eliminar, ya que con estas últimas se eliminan aquellos vértices que cuentan con una mayor conectivadad. Es decir, se eliminan los vértices que haría más probable que el grafo se divida en más componentes y, como resultado, el tamaño del componente más largo se vea disminuido.
+En cuanto al resultado obtenido en el apartado A (eliminando vértices aleatorios) esperábamos que este fuese el mayor que utilizando las métricas de centralidad para eliminar, ya que con estas últimas se eliminan aquellos vértices que cuentan con una mayor conectivadad. Es decir, se eliminan los vértices que haría más probable que el grafo se divida en más componentes y, como resultado, el tamaño del componente más largo se vea disminuido.
 
 
 
@@ -172,7 +172,7 @@ directed_graph = graph_from_data_frame(dataframe, directed=T)
 ```
 
 
-A continuación calculamos el algoritmo HIITS con el grafo dirigido. Este algoritmo nos devuelve dos vectores de puntuaciones: hub y authorities.
+A continuación calculamos el algoritmo HITS con el grafo dirigido. Este algoritmo nos devuelve dos vectores de puntuaciones: hub y authorities.
 
 ```{r ejercicio2}
 #Hub vector
@@ -192,5 +192,22 @@ head(PR$vector, decreasing = TRUE,10) # Top 10 PR
 
 
 Tanto el algoritmo de PageRank como el de HITS son utilizados para analizar los enlaces de un grafo y dar una puntuación a cada vértice de este. No obstante, entre ellos se pueden observar algunas diferencias como el alcance de nodos utilizados para el cálculo. Mientras HITS se aplica a un subgrafo o a los vecinos de un nodo, PageRank se aplica al grafo entero. De la misma forma, HITS trabaja dando puntuación a cada nodo según las aristas de entrada (*hub_score*) y los de salida (*hub_authority*), y PageRank solo a las aristas entrantes.
+
+Como podemos ver en los resultados obtenidos y en la figura \ref{fig:plotGrafo}, centrándonos en el nodo *0*, vemos como su puntuación en el vector *authorities* es 0, ya que no tiene ninguna arista entrante. No obstante, si nos fijamos en la puntuación del vector *hubs* se observa que su valor es más elevado en comparación a sus vértices vecinos ya que hay más aristas que salen de este nodo. Por otro lado, las puntuaciones de los primeros nodos en el vector obtenido con PageRank son valores bastante similares.
+
+
+
+```{r plotGrafo, echo = FALSE, fig.width=25, fig.height=25, fig.cap = "Representación gráfica parcial del nodo 0 como 'Hub'."}
+fg=graph_from_data_frame(d=dataframe, directed=T)
+subgraph = induced.subgraph(fg, vids = c(1:80))
+
+plot(subgraph, 
+     edge.arrow.size=2.5, 
+     vertex.label.cex=3.8,
+     vertex.size = 15,
+     )
+title("Incidencias en el nodo 0",cex.main=5)
+```
+
 
 En relación a tiempo de ejecución, HITS realiza los cálculos en tiempo búsqueda, pero PageRank realiza el cálculo de un nodo en el momento de indexación, lo que lo hace más eficiente en términos de complejidad. 
