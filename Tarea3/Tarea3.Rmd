@@ -16,13 +16,44 @@ library(igraph)
 
 **1. Implementar el calculo de las matrices de los núcleos de Neumann. La función debería tener dos parámetros: la matriz de adyacencia y el grado de difusión.**
 
-```{r cargarDatos}
-#Cargamos los datos del fichero .txt 
+
+
+```{r}
+
+neumann_kernel = function(A, grado){
+  At = t(A)
+  K = At %*% A
+  Ter = A %*% At
+  K_hat = K %*% solve(diag(100)-grado*K)
+  T_hat = Ter %*% solve(diag(100)-grado*Ter)
+
+  list_result = list(K_hat, T_hat)
+  
+  return(list_result)
+}
+
 
 
 ```
 
-**2. Aplicar el algoritmo a la matriz de adyacencia de páginas webs: webPageLinks.txt.
-Responda, con estos datos, el ejercicio 6.7 del libro.**
+**2. Aplicar el algoritmo a la matriz de adyacencia de páginas webs: webPageLinks.txt. Responda, con estos datos, el ejercicio 6.7 del libro.**
+
+```{r}
+#Leemos la matriz del fichero txt
+A = as.matrix(read.table("data/webPageLinks.txt"))
+
+#Generamos el grafo a partir de la matriz
+G = graph_from_adjacency_matrix(A)
+
+#Calculamos el grado de difusión
+d_out = max(degree(G, mode = "out"))
+d_in = max(degree(G, mode = "in"))
+grado = runif(1, 0, 1/min(c(d_out, d_in)))
+
+matrix_result = neumann_kernel(A, grado)
+K_hat = matrix_result[[1]]
+T_hat = matrix_result[[2]]
+```
+
 
 **7. (a) Describe how the HITS algorithm relates to the Neumann Kernel technique. (b) How does the decay factor γ affect the output of the Neumann Kernel algorithm?**
