@@ -56,4 +56,13 @@ T_hat = matrix_result[[2]]
 ```
 
 
-**7. (a) Describe how the HITS algorithm relates to the Neumann Kernel technique. (b) How does the decay factor γ affect the output of the Neumann Kernel algorithm?**
+**7.(a) Describe how the HITS algorithm relates to the Neumann Kernel technique.**
+
+La técnica del núcleo de Neumman demuestra que el algoritmo de HITS se puede generalizar y conseguir así un mecanismo eficiente que determina la relación y la importancia entre los vértices de un grafo. 
+
+Cuando el grado de difusión es grande se incrementa la importancia de los vértices más alejados del grafo, por lo que la solución que proporciona el kernel de Neumman  es muy similar o igual a la puntuación que calcula el algoritmo de HITS. 
+
+
+**7.(b) How does the decay factor γ affect the output of the Neumann Kernel algorithm?**
+
+El grado de difusión ($\gamma$) debe ser menor a $\frac{1}{\gamma_{m}}$
