@@ -90,3 +90,16 @@ Tscore2 = rowSums(T_hat2)
 El grado de difusión ($\gamma$) debe ser menor a $\frac{1}{\gamma_{m}}$
 
 Josep: El efecto del factor de difusión es el de dar de cada vez menos importancia cuanto más lejos está la conexión entre dos nodos. Es decir, tiene más peso la conexióne entre dos nodos directamente conectados que los que tinene n eristas entre ellos.    La teoria dice que las matrices de KN converge si $\gamma \geq \frac{1}{min(\Delta^-,\Delta^+)}$, donde $\Delta^-$ es el máximo grado entrada grafo y $\Delta^+$ es el máximo grado salida grafo. Cuando se elige un valor elevado de $\gamma$ la matriz $K_{\gamma}$ equivale a HITS
+
+
+```{r}
+#Hub
+hub_score = hub_score(G)$vector
+head(hub_score,5)
+
+#Authorities
+authority_score = authority_score(G)$vector
+head(authority_score,5)
+
+```
+
