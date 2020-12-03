@@ -115,7 +115,50 @@ cor2 = cor(Kscore2, authority_score)
 
 En este caso, observamos que no hay correlación (`r cor2`). Teóricamente, para valores más altos de $\gamma$, NK tendría que converger a HITS, pero en este caso, el resultado no es el esperado, puesto que la correlación indica que los valores de NK y Auth se alejan más entre ellos.
 
+Procedemos a usar otra formula para el calculo de las puntuaciones de Neuman Kernel. Esto solucionaría el error anterior en caso de que hubiera alún fallo en el cálculo con la función que hemos creado en el apartado anterior.
+
+Funciones: 
+
+$$
+\hat K_{\gamma} = K \sum_{n=0}^{\infty}\gamma^n K^n
+$$
+$$
+\hat T_{\gamma} = T \sum_{n=0}^{\infty}\gamma^n T^n
+$$
+```{r}
+library(expm)
+
+At = t(A)
+K = At %*% A
+Ter = A %*% At
+sumatorio = 0
+for (n in 0:7) {
+  sumatorio = sumatorio + gamma_max^n * K%^%n
+}
+K_hat = K%*%sumatorio
+sumatorio = 0
+for (n in 0:7) {
+  sumatorio = sumatorio + gamma_max^n * Ter%^%n
+}
+T_hat = Ter%*%sumatorio
+
+Kscore3 = rowSums(K_hat)
+Tscore3 = rowSums(T_hat)
+cor(Kscore3, authority_score)
+cor(Tscore3, hub_score)
+```
+Podemos observar que estos resultados son los esperados de acuerdo con la teoría. En este caso al ser un grafo relativamente pequeño el sumatorio de $n=(0,\infty)$ no es necesario, pues las puntuaciones de NK y HITS convergen con un sumatorio de $n=(0,7)$
+$$
+\hat K_{\gamma} = K \sum_{n=0}^{7}\gamma^n K^n
+$$
+$$
+\hat T_{\gamma} = T \sum_{n=0}^{7}\gamma^n T^n
+$$
+
+
 
 **(b) How does the decay factor $\gamma$ affect the output of the Neumann Kernel algorithm?**
 
 El factor de difusión ($\gamma$) da menos importancion a la influencia nodos más lejano. Es decir, tiene mayor peso la conexión entre dos vértices directamente conectados que los que tienen *n* aristas entre ellos. La teoria dice que las matrices de KN convergen si $\gamma \geq \frac{1}{min(\Delta^-,\Delta^+)}$, donde $\Delta^-$ es el máximo grado entrada y $\Delta^+$ es el máximo grado de salida del grafo. Cuando se elige un valor elevado de $\gamma$ la puntuación de $K_{\gamma}$ converge a la de authorities de HITS.
+
+
