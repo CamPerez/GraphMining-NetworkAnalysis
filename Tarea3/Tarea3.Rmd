@@ -147,7 +147,7 @@ Tscore3 = rowSums(T_hat)
 cor(Kscore3, authority_score)
 cor(Tscore3, hub_score)
 ```
-Podemos observar que estos resultados son los esperados de acuerdo con la teoría. En este caso al ser un grafo relativamente pequeño el sumatorio de $n=(0,\infty)$ no es necesario, pues las puntuaciones de NK y HITS convergen con un sumatorio de $n=(0,7)$
+Podemos observar que estos resultados son los esperados de acuerdo con la teoría. En este caso al ser un grafo relativamente pequeño el sumatorio de $n=(0,\dots,\infty)$ no es necesario, pues las puntuaciones de NK y HITS convergen con un sumatorio de $n=(0,\dots,7)$
 $$
 \hat K_{\gamma} = K \sum_{n=0}^{7}\gamma^n K^n
 $$
