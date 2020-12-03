@@ -60,21 +60,20 @@ T_hat1 = matrix_result[[2]]
 
 **(a) Describe how the HITS algorithm relates to the Neumann Kernel technique.**
 
-La técnica del núcleo de Neumman es una generalización del algoritmo de HITS. Por consecuencia, la authority score está relacionada con el score de la matriz $K_{\gamma}$ y el hub score con el score de la matriz $T_{\gamma}$. Si se crea un ranking de los nodos atendiendo a su authority score y a su K score, el orden de los nodos será el mismo, por lo que es notaria la relación entre ambos algoritmos. Además, si se anula el factor de difusión y usamos un valor $\gamma = 1$ los score serán los mismos.  
+La técnica del núcleo de Neumman es una generalización del algoritmo de HITS. Por consecuencia, la authority score está relacionada con el score de la matriz $K_{\gamma}$ y el hub score con el score de la matriz $T_{\gamma}$. Si se crea un ranking de los nodos atendiendo a su authority score y a su K score, el orden de los nodos será el mismo, por lo que es notaria la relación entre ambos algoritmos.
 
 Cuando el grado de difusión es grande se incrementa la importancia de los vértices más alejados del grafo, por lo que la solución que proporciona el kernel de Neumman  es muy similar o igual a la puntuación que calcula el algoritmo de HITS. 
 
 
 ```{r}
-#Calculamos el valor máximo que puede tener gamma para comparar 
-gamma_max = 1/min(c(d_out, d_in))
+#Calculamos el valor máximo que puede tener gamma
+gamma_max = 1/min(c(d_out, d_in)) 
 
-#El score del nodo i es la suma de la fila ith.
+#NK socres.
 Kscore1 = rowSums(K_hat1) 
 Tscore1 = rowSums(T_hat1) 
 
-#Comparación algoritmo HITS (Mirar correlaciones entre scores, si los rankings son 
-#iguales y si ambas puntuaciones convergen con gammas elevada)
+#Comparación algoritmo HITS 
 
 #Authorities
 authority_score = authority_score(G)$vector
@@ -91,7 +90,7 @@ head(Tscore1, 5)
 cor = cor(Kscore1, authority_score)
 ```
 
-Podemos observar que con una $\gamma$ aleatoria, en este ejemplo `r grado`, la correlación entre la $K_{\gamma}$ y el Authorities de HITS es elevada (`r cor`).
+Podemos observar que con una $\gamma$ aleatoria, en este ejemplo `r grado`, la correlación entre la $K_{\gamma}$ y el Authorities de HITS es muy elevada (`r cor`).
 
 A continuación realizamos la comparación utilizando el $\gamma$ con valor máximo (`r gamma_max`):
 
@@ -114,11 +113,9 @@ head(Tscore2, 5)
 cor2 = cor(Kscore2, authority_score)
 ```
 
-En este caso, observamos que la correlación es mínima (`r cor2`). Teóricamente, para valores más altos de $\gamma$, NK tendría que converger a HITS, pero en este caso, el resultado no es el esperado, puesto que la correlación indica que los valores de NK y Auth se alejan más entre ellos.
+En este caso, observamos que no hay correlación (`r cor2`). Teóricamente, para valores más altos de $\gamma$, NK tendría que converger a HITS, pero en este caso, el resultado no es el esperado, puesto que la correlación indica que los valores de NK y Auth se alejan más entre ellos.
 
 
 **(b) How does the decay factor $\gamma$ affect the output of the Neumann Kernel algorithm?**
 
-El factor de difusión ($\gamma$) da menos importancion o puntuación cuanto más lejos está la conexión entre dos nodos. Es decir, tiene mayor peso la conexión entre dos vértices directamente conectados que los que tienen *n* aristas entre ellos. La teoria dice que las matrices de KN converge si $\gamma \geq \frac{1}{min(\Delta^-,\Delta^+)}$, donde $\Delta^-$ es el máximo grado entrada y $\Delta^+$ es el máximo grado de salida grafo. Cuando se elige un valor elevado de $\gamma$ la matriz $K_{\gamma}$ equivale al authorities de HITS.
-
-
+El factor de difusión ($\gamma$) da menos importancion a la influencia nodos más lejano. Es decir, tiene mayor peso la conexión entre dos vértices directamente conectados que los que tienen *n* aristas entre ellos. La teoria dice que las matrices de KN convergen si $\gamma \geq \frac{1}{min(\Delta^-,\Delta^+)}$, donde $\Delta^-$ es el máximo grado entrada y $\Delta^+$ es el máximo grado de salida del grafo. Cuando se elige un valor elevado de $\gamma$ la puntuación de $K_{\gamma}$ converge a la de authorities de HITS.
