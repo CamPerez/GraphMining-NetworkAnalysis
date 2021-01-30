@@ -11,11 +11,12 @@ library(knitr)
 library(igraph)
 library(yardstick)
 library(ggplot2)
+library(kableExtra)
 ```
 
 **1) Generate an undirected random graph using the model of "preferential attachment" (sample_pa( )) of 1000 nodes. With $\beta=0.1$, $\gamma=0.1$, generate a SIR pandemic (iterative method). The initial infected nodes should be the 10 highest using the eigen_centrality( ). Compare the results to when the initial nodes are at random. Reduce or increase $\beta$ and compare. **
 
-
+Se define el algoritmo del modelo SIR como se muestra a continuación:
 
 ```{r}
 SIR_Model = function(x, beta, gamma){
@@ -26,6 +27,8 @@ SIR_Model = function(x, beta, gamma){
   return (x + beta * S * (A %*% x) - gamma * x)
 }
 ```
+
+Se ejecuta el algoritmo SIR con un grafo aleatorio de 1000 vértices y los nodos infectados como los más 10 nodos más centrales según "*eigen_centrality()*". El algoritmo se ejecuta 25 iteraciones en total:
 
 ```{r}
 #Generate random graph and obtain initial infected nodes
@@ -49,31 +52,110 @@ iter = 25
 RX = matrix(0, nrow = n, ncol = iter)
 RX[,1] = x0
 
-#SIR model iterations
+#SIR model, 25 iterations
 for (i in 2:(iter)){
   RX[,i] = SIR_Model(RX[,i-1], beta, gamma)
 }
 
 ```
 
+A continuación se realiza el experimento donde los 10 nodos infectados iniciales son escogidos aleatoriamente: 
 
 ```{r}
 set.seed(1234)
 infected_n2 = sample(V(g), 10)
 #Iteration 1 vector
-x0 = rep(0, n)
-x0[infected_n2] = 1
+x0_Random = rep(0, n)
+x0_Random[infected_n2] = 1
 
 RX_Random = matrix(0, nrow = n, ncol = iter)
-RX_Random[,1] = x0
+RX_Random[,1] = x0_Random
 
-#SIR model iterations
+#SIR model, 25 iterations
 for (i in 2:(iter)){
   RX_Random[,i] = SIR_Model(RX_Random[,i-1], beta, gamma)
 }
 ```
 
 
+Comparamos los resultados de ambas ejecuciones:
+
+```{r echo = FALSE}
+kable(as.data.frame(RX[1:5,1:10]), booktabs = T, caption = "Source infection: highly central nodes") %>%
+  kable_styling(latex_options = "hold_position", font_size = 7)
+
+kable(as.data.frame(RX_Random[101:106,1:10]), booktabs = T, caption = "Source infection: random nodes") %>%
+  kable_styling(latex_options = "hold_position", font_size = 7)
+
+
+infectedV2 = sum(RX[,2]) - 9
+
+infectedV2_Random = sum(RX_Random[,2]) - 9
+
+```
+
+
+Centrándonos en los nodos inicialmente infectados, se puede observar en la primera tabla, que si estos son nodos altamente conexos o centrales, su nivel de recuperación no es muy bueno ya que tienen contacto con un gran número de los otros nodos del grafo. Es decir, al estar influenciados por más vecinos, su recuperación es más lenta con el paso de las iteraciones. En cambio, si nos fijamos en los nodos inicialmente infectados de la segunda tabla, los cuales son cogidos aleatoriamente, vemos que su recuperación es continua con el paso de las iteraciones y su nivel de infección va disminuyendo en cada una de ellas. Esto se debe a que, al ser nodos escogidos al azar, no tiene por qué ser nodos centrales o con una gran cantidad de vecinos, por lo que no se ven tan influenciados por estos y es más fácil que se recupere.
+
+
+Por otro lado, si nos fijamos en los nodos que no estaban contagiados inicialmente (V1), podemos observar que en la segunda iteración de la tabla 1 hay un mayor número de infectados que en la tabla 2. Para medir los nuevos infectados, se ha sumado todas las infecciones de la segunda iteración en ambos casos y se le restan 9 puntos ya que es la parte aportada por los nodos infectados inicialmente (10x0,9), obteniendo los siguientes resultados:
+
+- Infección con nodos centrales: `r infectedV2`
+
+
+- Infección con nodos aleatorios: `r infectedV2_Random`
+
+Se puede apreciar claramente como en el primer caso la infección se ha propagado a un mayor número de nodos en el grafo. Esto es debido, como en el caso anterior, a la centralidad y conectividad de los nodos infectados inicialmente. Ya que los más centrales tienen un mayor alcance hacia otros nodos, la infección se propaga rápidamente.
+
+
+
+A continuación realizamos el mismo experimento cambiando el valor de beta a $\beta = 0.5$
+
+```{r echo = FALSE}
+beta = 0.5
+
+RX_b0.5 = matrix(0, nrow = n, ncol = iter)
+RX_b0.5[,1] = x0
+
+#SIR model, 25 iterations
+for (i in 2:(iter)){
+  RX_b0.5[,i] = SIR_Model(RX_b0.5[,i-1], beta, gamma)
+}
+
+kable(as.data.frame(RX_b0.5[1:5,1:10]), booktabs = T, caption = "Source infection: highly central nodes") %>%
+  kable_styling(latex_options = "hold_position", font_size = 7)
+
+```
+```{r echo = FALSE}
+beta = 0.5
+
+RX_Random_b0.5 = matrix(0, nrow = n, ncol = iter)
+RX_Random_b0.5[,1] = x0_Random
+
+#SIR model, 25 iterations
+for (i in 2:(iter)){
+  RX_Random_b0.5[,i] = SIR_Model(RX_Random_b0.5[,i-1], beta, gamma)
+}
+
+kable(as.data.frame(RX_Random_b0.5[101:106,1:10]), booktabs = T, caption = "Source infection: random nodes") %>%
+  kable_styling(latex_options = "hold_position", font_size = 7)
+
+
+infectedV2_b0.5 = sum(RX_b0.5[,2]) - 9
+
+infectedV2_Random_b0.5 = sum(RX_Random_b0.5[,2]) - 9
+```
+
+
+Se observa que al aumentar el beta, la infección en la segunda iteración de los nodos que se han infectado pasa de 0.1 a 0.5, por lo que la propagación es más rápida. Al hacer uso de la métrica explicada anteriormente obtenemos:
+
+- Infección con nodos centrales: `r infectedV2_b0.5`
+
+
+- Infección con nodos aleatorios: `r infectedV2_Random_b0.5`
+
+
+Se observa claramente que en la segunda iteración la puntuación de la infección, en relación a los valores obtenidos cuando beta era 0.1, ha incrementado notablemente.
 
 ```{r}
 
