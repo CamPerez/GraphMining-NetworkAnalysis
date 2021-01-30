@@ -9,9 +9,57 @@ output:
 knitr::opts_chunk$set(fig.width=8, fig.height=8, fig.align="center", echo=TRUE, warning=FALSE, message=FALSE)
 library(knitr)
 library(igraph)
+library(yardstick)
+library(ggplot2)
 ```
 
 **1) Generate an undirected random graph using the model of "preferential attachment" (sample_pa( )) of 1000 nodes. With $\beta=0.1$, $\gamma=0.1$, generate a SIR pandemic (iterative method). The initial infected nodes should be the 10 highest using the eigen_centrality( ). Compare the results to when the initial nodes are at random. Reduce or increase $\beta$ and compare. **
+
+```{r}
+SIR_Model = function(x, beta, gamma){
+
+  S = I - x - R
+  
+  return (x + beta * S * (A %*% x) - gamma * x)
+  
+}
+```
+
+```{r}
+beta = 0.1
+gamma = 0.1
+
+#Generate random graph and obtain initial infected nodes
+g = sample_pa(1000, power=1, directed=FALSE)
+eigen_cent = order(eigen_centrality(g)$vector, decreasing = TRUE)
+infected_n = head(eigen_cent, 10)
+
+A = as_adjacency_matrix(g)
+x0 = rep(0, 1000)
+x0[infected_n] = 1
+
+I = rep(1, 1000)
+R = rep(0, 1000)
+
+V(g)$prob = a
+
+a = SIR_Model(x0, beta, gamma)
+a_Df = as.data.frame(as.matrix(a))
+
+
+ggplot(a_Df, aes(x = c(1:1000), y = V1)) +
+  geom_point(aes(color = V1)) +
+  scale_fill_gradient(low="firebrick1", high = "chartreuse3")
+
+
+
+
+```
+
+
+
+
+
 
 **2)** Consider the random graph generated in the previous exercice. 
 
