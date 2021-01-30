@@ -1,8 +1,9 @@
 ---
 title: "Handout 4"
 output:
+  html_document: 
+    df_print: paged
   pdf_document: default
-  html_document: default
 ---
 
 ```{r global_options, include=FALSE}
@@ -84,7 +85,7 @@ Comparamos los resultados de ambas ejecuciones:
 kable(as.data.frame(RX[1:5,1:10]), booktabs = T, caption = "Source infection: highly central nodes") %>%
   kable_styling(latex_options = "hold_position", font_size = 7)
 
-kable(as.data.frame(RX_Random[101:106,1:10]), booktabs = T, caption = "Source infection: random nodes") %>%
+kable(as.data.frame(RX_Random[101:105,1:10]), booktabs = T, caption = "Source infection: random nodes") %>%
   kable_styling(latex_options = "hold_position", font_size = 7)
 
 
@@ -137,7 +138,7 @@ for (i in 2:(iter)){
   RX_Random_b0.5[,i] = SIR_Model(RX_Random_b0.5[,i-1], beta, gamma)
 }
 
-kable(as.data.frame(RX_Random_b0.5[101:106,1:10]), booktabs = T, caption = "Source infection: random nodes") %>%
+kable(as.data.frame(RX_Random_b0.5[101:105,1:10]), booktabs = T, caption = "Source infection: random nodes") %>%
   kable_styling(latex_options = "hold_position", font_size = 7)
 
 

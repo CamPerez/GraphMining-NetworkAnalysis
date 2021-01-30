@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.30)  30 JAN 2021 20:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.30)  30 JAN 2021 20:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -716,7 +716,7 @@ l.273
                                                   
 l.273 
       ]
-Overfull \hbox (18.46031pt too wide) in paragraph at lines 279--290
+Overfull \hbox (18.46031pt too wide) in paragraph at lines 282--293
  [][] 
  []
 
@@ -724,25 +724,25 @@ Overfull \hbox (18.46031pt too wide) in paragraph at lines 279--290
 File: Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type pdf)
 <use Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf>
 Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf  used o
-n input line 322.
+n input line 341.
 (pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
 [3pdfTeX warning (ext4): destination with the same identifier (name{table.3}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   
-l.322 ...ure-latex/unnamed-chunk-7-1} \end{center}
+l.341 ...ure-latex/unnamed-chunk-7-1} \end{center}
                                                   pdfTeX warning (ext4): destin
 ation with the same identifier (name{table.4}) has been already used, duplicate
  ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   
-l.322 ...ure-latex/unnamed-chunk-7-1} \end{center}
+l.341 ...ure-latex/unnamed-chunk-7-1} \end{center}
                                                   ]
 <Hoja4_files/figure-latex/unnamed-chunk-7-2.pdf, id=33, 578.16pt x 578.16pt>
 File: Hoja4_files/figure-latex/unnamed-chunk-7-2.pdf Graphic file (type pdf)
 <use Hoja4_files/figure-latex/unnamed-chunk-7-2.pdf>
 Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-7-2.pdf  used o
-n input line 334.
+n input line 353.
 (pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
 [4 <./Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf>] [5 <./Hoja4_files/figure
 -latex/unnamed-chunk-7-2.pdf>] [6] (./Hoja4.aux)
@@ -774,7 +774,7 @@ ist/fonts/type1/public/lm/lmri10.pfb><c:/Users/campe/AppData/Roaming/TinyTeX/te
 xmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/campe/AppData/Roaming/TinyT
 eX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/campe/AppData/Roaming/
 TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on Hoja4.pdf (6 pages, 342697 bytes).
+Output written on Hoja4.pdf (6 pages, 343399 bytes).
 PDF statistics:
  96 PDF objects out of 1000 (max. 8388607)
  73 compressed objects within 1 object stream
