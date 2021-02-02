@@ -20,12 +20,13 @@ library(kableExtra)
 Se define el algoritmo del modelo SIR como se muestra a continuación:
 
 ```{r}
-SIR_Model = function(x, beta, gamma){
+SIR_Model = function(x, r, s, beta, gamma){
 
-  S = I - x - R
-  R = R + gamma * x
-  
-  return (x + beta * S * (A %*% x) - gamma * x)
+  R = r + gamma * x
+  S = I - x - r
+  X = x + beta * s * (A %*% x) - gamma * x
+
+  return(list(S, R, X))
 }
 ```
 
@@ -37,7 +38,7 @@ n = 1000
 set.seed(1234)
 g = sample_pa(n, power=1, directed=FALSE)
 eigen_cent = order(eigen_centrality(g)$vector, decreasing = TRUE)
-infected_n = head(eigen_cent, 10)
+infected_n = head(eigen_cent, 1)
 
 #Iteration 1 vector
 x0 = rep(0, n)
@@ -49,13 +50,26 @@ gamma = 0.1
 A = as.matrix(as_adjacency_matrix(g))
 I = rep(1, n)
 R = rep(0, n)
-iter = 25
+iter = 250
+
 RX = matrix(0, nrow = n, ncol = iter)
 RX[,1] = x0
 
-#SIR model, 25 iterations
+RR = matrix(0, nrow = n, ncol = iter)
+RR[,1] = R
+
+RS = matrix(0, nrow = n, ncol = iter)
+RS[,1] = I - x0 - R 
+
+#SIR model, 250 iterations
 for (i in 2:(iter)){
-  RX[,i] = SIR_Model(RX[,i-1], beta, gamma)
+  result = SIR_Model(RX[,i-1], RR[,i-1], RS[,i-1], beta, gamma)
+  #Prob. infected
+  RX[,i] = result[[3]]
+  #Prob. recovered
+  RR[,i] = result[[2]]
+  #Prob. sus
+  RS[,i] = result[[1]]
 }
 
 ```
@@ -72,9 +86,21 @@ x0_Random[infected_n2] = 1
 RX_Random = matrix(0, nrow = n, ncol = iter)
 RX_Random[,1] = x0_Random
 
-#SIR model, 25 iterations
+RR_Random = matrix(0, nrow = n, ncol = iter)
+RR_Random[,1] = R
+
+RS_Random = matrix(0, nrow = n, ncol = iter)
+RS_Random[,1] = I - x0 - R 
+
+#SIR model, 250 iterations
 for (i in 2:(iter)){
-  RX_Random[,i] = SIR_Model(RX_Random[,i-1], beta, gamma)
+  result_Random = SIR_Model(RX_Random[,i-1], RR_Random[,i-1], RS_Random[,i-1], beta, gamma)
+  #Prob. infected
+  RX_Random[,i] = result_Random[[3]]
+  #Prob. recovered
+  RR_Random[,i] = result_Random[[2]]
+  #Prob. sus
+  RS_Random[,i] = result_Random[[1]]
 }
 ```
 

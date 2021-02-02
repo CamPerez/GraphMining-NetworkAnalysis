@@ -1949,7 +1949,7 @@ gamma = 0.1
 A = as.matrix(as_adjacency_matrix(g))
 I = rep(1, n)
 R = rep(0, n)
-iter = 25
+iter = 100
 RX = matrix(0, nrow = n, ncol = iter)
 RX[,1] = x0
 
@@ -2372,38 +2372,6 @@ V10
 0.0843016
 </td>
 </tr>
-<tr>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:right;">
-0.0
-</td>
-<td style="text-align:right;">
-0.000
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-<td style="text-align:right;">
-0.0001000
-</td>
-<td style="text-align:right;">
-0.0004390
-</td>
-<td style="text-align:right;">
-0.0012139
-</td>
-<td style="text-align:right;">
-0.0027187
-</td>
-<td style="text-align:right;">
-0.0053920
-</td>
-<td style="text-align:right;">
-0.0098658
-</td>
-</tr>
 </tbody>
 </table>
 <p>Centrándonos en los nodos inicialmente infectados, se puede observar en la primera tabla, que si estos son nodos altamente conexos o centrales, su nivel de recuperación no es muy bueno ya que tienen contacto con un gran número de los otros nodos del grafo. Es decir, al estar influenciados por más vecinos, su recuperación es más lenta con el paso de las iteraciones. En cambio, si nos fijamos en los nodos inicialmente infectados de la segunda tabla, los cuales son cogidos aleatoriamente, vemos que su recuperación es continua con el paso de las iteraciones y su nivel de infección va disminuyendo en cada una de ellas. Esto se debe a que, al ser nodos escogidos al azar, no tiene por qué ser nodos centrales o con una gran cantidad de vecinos, por lo que no se ven tan influenciados por estos y es más fácil que se recupere.</p>
@@ -2812,38 +2780,6 @@ V10
 </td>
 <td style="text-align:right;">
 2.1604761
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:right;">
-0.0
-</td>
-<td style="text-align:right;">
-0.00
-</td>
-<td style="text-align:right;">
-0.0000
-</td>
-<td style="text-align:right;">
-0.0625000
-</td>
-<td style="text-align:right;">
-0.2070374
-</td>
-<td style="text-align:right;">
-0.7296005
-</td>
-<td style="text-align:right;">
-0.9565319
-</td>
-<td style="text-align:right;">
-0.7226149
-</td>
-<td style="text-align:right;">
--1345.2022881
 </td>
 </tr>
 </tbody>
