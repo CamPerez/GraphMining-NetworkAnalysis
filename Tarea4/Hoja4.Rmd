@@ -30,7 +30,7 @@ SIR_Model = function(x, r, s, beta, gamma){
 }
 ```
 
-Se ejecuta el algoritmo SIR con un grafo aleatorio de 1000 vértices y los nodos infectados como los más 10 nodos más centrales según "*eigen_centrality()*". El algoritmo se ejecuta 25 iteraciones en total:
+Se ejecuta el algoritmo SIR con un grafo aleatorio de 1000 vértices y los nodos infectados como los más 10 nodos más centrales según "*eigen_centrality()*". El algoritmo se ejecuta 50 iteraciones en total:
 
 ```{r}
 #Generate random graph and obtain initial infected nodes
@@ -38,7 +38,7 @@ n = 1000
 set.seed(1234)
 g = sample_pa(n, power=1, directed=FALSE)
 eigen_cent = order(eigen_centrality(g)$vector, decreasing = TRUE)
-infected_n = head(eigen_cent, 1)
+infected_n = head(eigen_cent, 10)
 
 #Iteration 1 vector
 x0 = rep(0, n)
@@ -50,7 +50,7 @@ gamma = 0.1
 A = as.matrix(as_adjacency_matrix(g))
 I = rep(1, n)
 R = rep(0, n)
-iter = 250
+iter = 500
 
 RX = matrix(0, nrow = n, ncol = iter)
 RX[,1] = x0
@@ -122,7 +122,7 @@ infectedV2_Random = sum(RX_Random[,2]) - 9
 ```
 
 
-Centrándonos en los nodos inicialmente infectados, se puede observar en la primera tabla, que si estos son nodos altamente conexos o centrales, su nivel de recuperación no es muy bueno ya que tienen contacto con un gran número de los otros nodos del grafo. Es decir, al estar influenciados por más vecinos, su recuperación es más lenta con el paso de las iteraciones. En cambio, si nos fijamos en los nodos inicialmente infectados de la segunda tabla, los cuales son cogidos aleatoriamente, vemos que su recuperación es continua con el paso de las iteraciones y su nivel de infección va disminuyendo en cada una de ellas. Esto se debe a que, al ser nodos escogidos al azar, no tiene por qué ser nodos centrales o con una gran cantidad de vecinos, por lo que no se ven tan influenciados por estos y es más fácil que se recupere.
+Centrándonos en los nodos inicialmente infectados, se puede observar en la primera tabla, que si estos son nodos altamente conexos o centrales, su nivel de recuperación no es muy bueno ya que tienen contacto con un gran número de los otros nodos del grafo. Es decir, al estar influenciados por más vecinos, su recuperación es más lenta con el paso de las iteraciones. En cambio, si nos fijamos en los nodos inicialmente infectados de la segunda tabla, los cuales son escogidos aleatoriamente, vemos que su recuperación es continua con el paso de las iteraciones y su nivel de infección va disminuyendo en cada una de ellas. Esto se debe a que, al ser nodos escogidos al azar, no tiene por qué ser nodos centrales o con una gran cantidad de vecinos, por lo que no se ven tan influenciados por estos y es más fácil que se recupere.
 
 
 Por otro lado, si nos fijamos en los nodos que no estaban contagiados inicialmente (V1), podemos observar que en la segunda iteración de la tabla 1 hay un mayor número de infectados que en la tabla 2. Para medir los nuevos infectados, se ha sumado todas las infecciones de la segunda iteración en ambos casos y se le restan 9 puntos ya que es la parte aportada por los nodos infectados inicialmente (10x0,9), obteniendo los siguientes resultados:
@@ -135,54 +135,6 @@ Por otro lado, si nos fijamos en los nodos que no estaban contagiados inicialmen
 Se puede apreciar claramente como en el primer caso la infección se ha propagado a un mayor número de nodos en el grafo. Esto es debido, como en el caso anterior, a la centralidad y conectividad de los nodos infectados inicialmente. Ya que los más centrales tienen un mayor alcance hacia otros nodos, la infección se propaga rápidamente.
 
 
-
-A continuación realizamos el mismo experimento cambiando el valor de beta a $\beta = 0.5$
-
-```{r echo = FALSE}
-beta = 0.5
-
-RX_b0.5 = matrix(0, nrow = n, ncol = iter)
-RX_b0.5[,1] = x0
-
-#SIR model, 25 iterations
-for (i in 2:(iter)){
-  RX_b0.5[,i] = SIR_Model(RX_b0.5[,i-1], beta, gamma)
-}
-
-kable(as.data.frame(RX_b0.5[1:5,1:10]), booktabs = T, caption = "Source infection: highly central nodes") %>%
-  kable_styling(latex_options = "hold_position", font_size = 7)
-
-```
-```{r echo = FALSE}
-beta = 0.5
-
-RX_Random_b0.5 = matrix(0, nrow = n, ncol = iter)
-RX_Random_b0.5[,1] = x0_Random
-
-#SIR model, 25 iterations
-for (i in 2:(iter)){
-  RX_Random_b0.5[,i] = SIR_Model(RX_Random_b0.5[,i-1], beta, gamma)
-}
-
-kable(as.data.frame(RX_Random_b0.5[101:105,1:10]), booktabs = T, caption = "Source infection: random nodes") %>%
-  kable_styling(latex_options = "hold_position", font_size = 7)
-
-
-infectedV2_b0.5 = sum(RX_b0.5[,2]) - 9
-
-infectedV2_Random_b0.5 = sum(RX_Random_b0.5[,2]) - 9
-```
-
-
-Se observa que al aumentar el beta, la infección en la segunda iteración de los nodos que se han infectado pasa de 0.1 a 0.5, por lo que la propagación es más rápida. Al hacer uso de la métrica explicada anteriormente obtenemos:
-
-- Infección con nodos centrales: `r infectedV2_b0.5`
-
-
-- Infección con nodos aleatorios: `r infectedV2_Random_b0.5`
-
-
-Se observa claramente que en la segunda iteración la puntuación de la infección, en relación a los valores obtenidos cuando beta era 0.1, ha incrementado notablemente.
 
 ```{r}
 
@@ -198,6 +150,124 @@ df = as.data.frame(as.matrix(RX))
 ggplot(df, aes(x = c(1:n), y = V1)) +
   geom_point(aes(color = V1)) +
   scale_colour_gradient(low="chartreuse3", high = "firebrick1")
+
+```
+
+```{r}
+case1_RR = colSums(RR)
+case1_RX = colSums(RX)
+case1_RS = colSums(RS)
+
+df = as.data.frame(t(rbind(case1_RR, case1_RX, case1_RS)))
+
+ggplot(df, aes(x = c(1:iter))) +
+  geom_line(aes(y = case1_RR), color = "green") +
+  geom_line(aes(y = case1_RX), color = "red") +
+  geom_line(aes(y = case1_RS), color = "blue")
+```
+
+
+
+
+
+A continuación realizamos el mismo experimento cambiando el valor de beta a $\beta = 0.5$
+
+```{r echo = FALSE}
+
+iter = 20
+beta = 0.5
+
+#Iteration 1 vector
+x0 = rep(0, n)
+x0[infected_n] = 1
+
+RX = matrix(0, nrow = n, ncol = iter)
+RX[,1] = x0
+
+RR = matrix(0, nrow = n, ncol = iter)
+RR[,1] = R
+
+RS = matrix(0, nrow = n, ncol = iter)
+RS[,1] = I - x0 - R 
+
+#SIR model, 250 iterations
+for (i in 2:(iter)){
+  result = SIR_Model(RX[,i-1], RR[,i-1], RS[,i-1], beta, gamma)
+  #Prob. infected
+  RX[,i] = result[[3]]
+  #Prob. recovered
+  RR[,i] = result[[2]]
+  #Prob. sus
+  RS[,i] = result[[1]]
+}
+
+```
+
+
+```{r echo = FALSE}
+x0_Random = rep(0, n)
+x0_Random[infected_n2] = 1
+
+RX_Random = matrix(0, nrow = n, ncol = iter)
+RX_Random[,1] = x0_Random
+
+RR_Random = matrix(0, nrow = n, ncol = iter)
+RR_Random[,1] = R
+
+RS_Random = matrix(0, nrow = n, ncol = iter)
+RS_Random[,1] = I - x0 - R 
+
+#SIR model, 250 iterations
+for (i in 2:(iter)){
+  result_Random = SIR_Model(RX_Random[,i-1], RR_Random[,i-1], RS_Random[,i-1], beta, gamma)
+  #Prob. infected
+  RX_Random[,i] = result_Random[[3]]
+  #Prob. recovered
+  RR_Random[,i] = result_Random[[2]]
+  #Prob. sus
+  RS_Random[,i] = result_Random[[1]]
+}
+```
+
+Comparamos los resultados de ambas ejecuciones:
+
+```{r echo = FALSE}
+kable(as.data.frame(RX[1:5,1:10]), booktabs = T, caption = "Source infection: highly central nodes") %>%
+  kable_styling(latex_options = "hold_position", font_size = 7)
+
+kable(as.data.frame(RX_Random[101:105,1:10]), booktabs = T, caption = "Source infection: random nodes") %>%
+  kable_styling(latex_options = "hold_position", font_size = 7)
+
+
+infectedV2 = sum(RX[,2]) - 9
+
+infectedV2_Random = sum(RX_Random[,2]) - 9
+
+```
+
+
+Se observa que al aumentar el beta, la infección en la segunda iteración de los nodos que se han infectado pasa de 0.1 a 0.5, por lo que la propagación es más rápida. Al hacer uso de la métrica explicada anteriormente obtenemos:
+
+- Infección con nodos centrales: `r infectedV2_b0.5`
+
+
+- Infección con nodos aleatorios: `r infectedV2_Random_b0.5`
+
+
+Se observa claramente que en la segunda iteración la puntuación de la infección, en relación a los valores obtenidos cuando beta era 0.1, ha incrementado notablemente.
+
+
+```{r}
+case1_RR = colSums(RR)
+case1_RX = colSums(RX)
+case1_RS = colSums(RS)
+
+df = as.data.frame(t(rbind(case1_RR, case1_RX, case1_RS)))
+
+ggplot(df, aes(x = c(1:iter))) +
+  geom_line(aes(y = case1_RR), color = "green") +
+  geom_line(aes(y = case1_RX), color = "red") +
+  geom_line(aes(y = case1_RS), color = "blue")
 ```
 
 
