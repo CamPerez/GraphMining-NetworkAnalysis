@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.30)  30 JAN 2021 20:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.30)  4 FEB 2021 22:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -558,6 +558,9 @@ File: l3backend-pdftex.def 2020-01-29 L3 backend support: PDF output (pdfTeX)
 
 LaTeX Warning: Label `tab:unnamed-chunk-4' multiply defined.
 
+
+LaTeX Warning: Label `tab:unnamed-chunk-8' multiply defined.
+
 )
 \openout1 = `Hoja4.aux'.
 
@@ -701,51 +704,80 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 
 {c:/Users/campe/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdfte
 x.map}]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
-63.
-(c:/Users/campe/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
-File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [2pdfTeX warning (ext4): destination with the same identifier (name{table.1})
- has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  
-l.273 
-      pdfTeX warning (ext4): destination with the same identifier (name{table.2
-}) has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  
-l.273 
-      ]
-Overfull \hbox (18.46031pt too wide) in paragraph at lines 282--293
- [][] 
- []
 
-<Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf, id=26, 578.16pt x 578.16pt>
-File: Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (type pdf)
-<use Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf>
-Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf  used o
-n input line 341.
-(pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
-[3pdfTeX warning (ext4): destination with the same identifier (name{table.3}) h
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[2pdfTeX warning (ext4): destination with the same identifier (name{table.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   
-l.341 ...ure-latex/unnamed-chunk-7-1} \end{center}
-                                                  pdfTeX warning (ext4): destin
-ation with the same identifier (name{table.4}) has been already used, duplicate
- ignored
+l.276 
+      ]
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
+87.
+(c:/Users/campe/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
+File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+<Hoja4_files/figure-latex/unnamed-chunk-5-1.pdf, id=24, 578.16pt x 578.16pt>
+File: Hoja4_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (type pdf)
+<use Hoja4_files/figure-latex/unnamed-chunk-5-1.pdf>
+Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-5-1.pdf  used o
+n input line 313.
+(pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
+[3pdfTeX warning (ext4): destination with the same identifier (name{table.2}) h
+as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   
-l.341 ...ure-latex/unnamed-chunk-7-1} \end{center}
+l.313 ...ure-latex/unnamed-chunk-5-1} \end{center}
                                                   ]
-<Hoja4_files/figure-latex/unnamed-chunk-7-2.pdf, id=33, 578.16pt x 578.16pt>
-File: Hoja4_files/figure-latex/unnamed-chunk-7-2.pdf Graphic file (type pdf)
-<use Hoja4_files/figure-latex/unnamed-chunk-7-2.pdf>
-Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-7-2.pdf  used o
-n input line 353.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[4pdfTeX warning (ext4): destination with the same identifier (name{table.3}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  
+l.363   I
+         nfección con nodos centrales: 23 <./Hoja4_files/figure-latex/unnamed-
+chunk-5-1.pdf>]
+<Hoja4_files/figure-latex/unnamed-chunk-9-1.pdf, id=41, 578.16pt x 578.16pt>
+File: Hoja4_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type pdf)
+<use Hoja4_files/figure-latex/unnamed-chunk-9-1.pdf>
+Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-9-1.pdf  used o
+n input line 387.
 (pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
-[4 <./Hoja4_files/figure-latex/unnamed-chunk-7-1.pdf>] [5 <./Hoja4_files/figure
--latex/unnamed-chunk-7-2.pdf>] [6] (./Hoja4.aux)
+[5pdfTeX warning (ext4): destination with the same identifier (name{table.4}) h
+as been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  
+l.387 ...ure-latex/unnamed-chunk-9-1} \end{center}
+                                                  ]
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
+403.
+(c:/Users/campe/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [6 <./Hoja4_files/figure-latex/unnamed-chunk-9-1.pdf>]
+<Hoja4_files/figure-latex/unnamed-chunk-10-1.pdf, id=57, 578.16pt x 578.16pt>
+File: Hoja4_files/figure-latex/unnamed-chunk-10-1.pdf Graphic file (type pdf)
+<use Hoja4_files/figure-latex/unnamed-chunk-10-1.pdf>
+Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-10-1.pdf  used 
+on input line 412.
+(pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
+<Hoja4_files/figure-latex/unnamed-chunk-10-2.pdf, id=58, 578.16pt x 578.16pt>
+File: Hoja4_files/figure-latex/unnamed-chunk-10-2.pdf Graphic file (type pdf)
+<use Hoja4_files/figure-latex/unnamed-chunk-10-2.pdf>
+Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-10-2.pdf  used 
+on input line 422.
+(pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
+[7 <./Hoja4_files/figure-latex/unnamed-chunk-10-1.pdf>] [8 <./Hoja4_files/figur
+e-latex/unnamed-chunk-10-2.pdf>]
+<Hoja4_files/figure-latex/unnamed-chunk-13-1.pdf, id=78, 578.16pt x 578.16pt>
+File: Hoja4_files/figure-latex/unnamed-chunk-13-1.pdf Graphic file (type pdf)
+<use Hoja4_files/figure-latex/unnamed-chunk-13-1.pdf>
+Package pdftex.def Info: Hoja4_files/figure-latex/unnamed-chunk-13-1.pdf  used 
+on input line 518.
+(pdftex.def)             Requested size: 469.75385pt x 469.75385pt.
+[9] [10 <./Hoja4_files/figure-latex/unnamed-chunk-13-1.pdf>] (./Hoja4.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -753,13 +785,13 @@ Package rerunfilecheck Info: File `Hoja4.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 12493 strings out of 481252
- 181892 string characters out of 5914123
- 492460 words of memory out of 5000000
- 29173 multiletter control sequences out of 15000+600000
- 448402 words of font info for 69 fonts, out of 8000000 for 9000
+ 12554 strings out of 481252
+ 183583 string characters out of 5914123
+ 490403 words of memory out of 5000000
+ 29223 multiletter control sequences out of 15000+600000
+ 448707 words of font info for 70 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,9n,74p,393b,392s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,9n,74p,413b,396s stack positions out of 5000i,500n,10000p,200000b,80000s
 {c:/Users/campe/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.
 enc}{c:/Users/campe/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec
 .enc}{c:/Users/campe/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-r
@@ -774,10 +806,10 @@ ist/fonts/type1/public/lm/lmri10.pfb><c:/Users/campe/AppData/Roaming/TinyTeX/te
 xmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/campe/AppData/Roaming/TinyT
 eX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/campe/AppData/Roaming/
 TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on Hoja4.pdf (6 pages, 343399 bytes).
+Output written on Hoja4.pdf (10 pages, 311541 bytes).
 PDF statistics:
- 96 PDF objects out of 1000 (max. 8388607)
- 73 compressed objects within 1 object stream
- 11 named destinations out of 1000 (max. 500000)
- 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 135 PDF objects out of 1000 (max. 8388607)
+ 102 compressed objects within 2 object streams
+ 15 named destinations out of 1000 (max. 500000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 
