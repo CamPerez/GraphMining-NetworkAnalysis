@@ -1,9 +1,10 @@
 ---
 title: "Handout 4"
+author: "Laura Basalo Tur, Camila Pérez Arévalo, Josep Roman Cardell"
 output:
+  pdf_document: default
   html_document: 
     df_print: paged
-  pdf_document: default
 ---
 
 ```{r global_options, include=FALSE}
@@ -31,7 +32,7 @@ SIR_Model = function(x, r, s, beta, gamma){
 }
 ```
 
-Se ejecuta el algoritmo SIR con un grafo aleatorio de 1000 vértices y los nodos infectados como los más 10 nodos más centrales según "*eigen_centrality()*". El algoritmo se ejecuta 150 iteraciones en total:
+Se ejecuta el algoritmo SIR con un grafo aleatorio de 1000 vértices y los nodos infectados como los 10 nodos más centrales según "*eigen_centrality()*". El algoritmo se ejecuta 150 iteraciones en total:
 
 ```{r}
 #Generate random graph and obtain initial infected nodes
@@ -123,20 +124,16 @@ infectedV2_Random = sum(RX_Random[,2]) - 9
 ```
 
 
-Centrándonos en los nodos inicialmente infectados, se puede observar en la primera tabla, que si estos son nodos altamente conexos o centrales, su nivel de recuperación no es muy bueno ya que tienen contacto con un gran número de los otros nodos del grafo. Es decir, al estar influenciados por más vecinos, su recuperación es más lenta con el paso de las iteraciones. En cambio, si nos fijamos en los nodos inicialmente infectados de la segunda tabla, los cuales son escogidos aleatoriamente, vemos que su recuperación es continua con el paso de las iteraciones y su nivel de infección va disminuyendo en cada una de ellas. Esto se debe a que, al ser nodos escogidos al azar, no tiene por qué ser nodos centrales o con una gran cantidad de vecinos, por lo que no se ven tan influenciados por estos y es más fácil que se recupere.
+Centrándonos en la recuperación de los nodos, vemos que tienen la misma velocidad de recuperación los nodos de ambos experimentos. Esto se debe a que la recuperación de un nodo depende de su propia infección y es independiente de la de sus vecinos. A partir de los nodos inicialmente infectados podemos ver como si nivel de infección disminuye a la misma velocidad en los dos grafos.
 
-
-Por otro lado, si nos fijamos en los nodos que no estaban contagiados inicialmente (V1), podemos observar que en la segunda iteración de la tabla 1 hay un mayor número de infectados que en la tabla 2. Para medir los nuevos infectados, se ha sumado todas las infecciones de la segunda iteración en ambos casos y se le restan 9 puntos ya que es la parte aportada por los nodos infectados inicialmente (10x0,9), obteniendo los siguientes resultados:
+Por otro lado, si nos fijamos en los nodos que no estaban contagiados inicialmente, i.e. $V1=0$, podemos observar que en la segunda iteración de la tabla 1 hay un mayor número de infectados que en la tabla 2. Para medir los nuevos infectados, se ha sumado todas las infecciones de la segunda iteración en ambos casos y se le restan 9 puntos ya que es la parte aportada por los nodos infectados inicialmente (10x0,9), obteniendo los siguientes resultados de infección tras la primera iteración:
 
 - Infección con nodos centrales: `r infectedV2`
 
 
 - Infección con nodos aleatorios: `r infectedV2_Random`
 
-Se puede apreciar claramente como en el primer caso la infección se ha propagado a un mayor número de nodos en el grafo. Esto es debido, como en el caso anterior, a la centralidad y conectividad de los nodos infectados inicialmente. Ya que los más centrales tienen un mayor alcance hacia otros nodos, la infección se propaga rápidamente.
-
-
-
+Se puede apreciar claramente como la infección se ha propagado a un mayor número de nodos en el grafo. Esto es debido, como en el caso anterior, a la centralidad y connectividad de los nodos infectados inicialmente. Ya que los más centrales tienen un mayor alcance hacia otros nodos, la infección se propaga rápidamente.
 
 ```{r}
 case1_RR = colSums(RR)
@@ -148,9 +145,10 @@ df = as.data.frame(t(rbind(case1_RR, case1_RX, case1_RS)))
 ggplot(df, aes(x = c(1:iter))) +
   geom_line(aes(y = case1_RR), color = "green") +
   geom_line(aes(y = case1_RX), color = "red") +
-  geom_line(aes(y = case1_RS), color = "blue")
+  geom_line(aes(y = case1_RS), color = "blue") +
+  ggtitle("Evolución del estado de la población", subtitle="Beta=0.1") +
+  xlab("Iteraciones") + ylab("Número de nodos")
 ```
-
 
 A continuación realizamos el mismo experimento cambiando el valor de beta a $\beta = 0.5$
 
@@ -183,7 +181,6 @@ for (i in 2:(iter)){
   #Prob. sus
   RS[,i] = result[[1]]
 }
-
 ```
 
 
@@ -237,7 +234,7 @@ Se observa que al aumentar el beta, la infección en la segunda iteración de lo
 - Infección con nodos aleatorios: `r infectedV2_Random`
 
 
-Se observa claramente que en la segunda iteración la puntuación de la infección, en relación a los valores obtenidos cuando beta era 0.1, ha incrementado notablemente.
+Se observa claramente que en la segunda iteración la puntuación de la infección, en relación a los valores obtenidos cuando beta era 0.1, ha incrementado notablemente en cada situación inicial respectivamente.
 
 
 ```{r}
@@ -250,18 +247,16 @@ df = as.data.frame(t(rbind(case1_RR, case1_RX, case1_RS)))
 ggplot(df, aes(x = c(1:iter))) +
   geom_line(aes(y = case1_RR), color = "green") +
   geom_line(aes(y = case1_RX), color = "red") +
-  geom_line(aes(y = case1_RS), color = "blue")
+  geom_line(aes(y = case1_RS), color = "blue") +
+  ggtitle("Evolución del estado de la población", subtitle="Beta=0.5") +
+  xlab("Iteraciones") + ylab("Número de nodos")
 ```
 
 
 
+**2) Consider the random graph generated in the previous exercice.** 
 
-
-
-
-**2)** Consider the random graph generated in the previous exercice. 
-
-*a)* Plot its degrees distribution in linear and in log-log scale. Which is more helpful to understand this distribution?
+*a)* *Plot its degrees distribution in linear and in log-log scale. Which is more helpful to understand this distribution?*
 
 ```{r}
 #Calculate degree distribution
@@ -288,14 +283,14 @@ En el caso de tener que representar un grafo más grande, cuyo rango de grados p
 
 
 
-*b)* Does the degree distribution follows a Power Law? And if we consider only the nodes with degree above 5? (or 10? or 100?)
+*b) Does the degree distribution follows a Power Law? And if we consider only the nodes with degree above 5? (or 10? or 100?)*
 
 La distribución de grados de nuestro grafo, como se ha podido observar en los gráficos anteriores, sigue la relación matemática *Power Law*, donde a la derecha de la representación encontramos un amplio rango de grados altos con frecuencias bajas y en la parte izquierda, se encuentra un gran conjunto de nodos de grados menores.
 
 Si solamente se tuviese en cuenta la distribución de nodos con grado mayor a 5, 10 o 100, no se seguiría la relación *Power Law*, ya que no habría una gran cantidad de nodos con el mismo grado en la parte izquierda de la representación. En nuestro ejemplo, la mayoría se encuentran con grado 1, 2 y 3. 
 
 
-*c)* Find the best line that approximates the degree distribution after degree 10 (or 5?) using linear regression ( lm() ) on the log-log plane. Don't worry, it is almost all done in the following code. Explain in detail each line of the following code:
+*c) Find the best line that approximates the degree distribution after degree 10 (or 5?) using linear regression ( lm() ) on the log-log plane. Don't worry, it is almost all done in the following code. Explain in detail each line of the following code:*
 
 ```{r, eval=FALSE}
 D = degree_distribution(g)  #Obtenemos la distribución de grado
@@ -315,7 +310,7 @@ log(P_{d}(k)) = `r 12` + `r 12`k
 
 
 
-*d)* What is the exponent of the Power Law for the degree probabilities?
+*d) What is the exponent of the Power Law for the degree probabilities?*
 
 ```{r}
 pl = fit_power_law(df_dist$`Relative Frequency`)
@@ -325,9 +320,9 @@ El exponente de *Power Law* de nuestro grafo es `r pl$alpha`.
 
 
 
-**3)** Use the routine sample_pa( ) to generate a rich-get-richer (preferential attachment) graph with similar degree distribution of  the *directed* facebook graph of the file **facebook_sample_anon.txt**. Use the code similar to:
-sample_pa(n.GRAPH, out.seq=degree(GRAPH,mode="out"))
-Plot the degree distribution of the generated graph (log-log). What is the exponent of the power law of the generated graph for the in-degrees? 
+**3) Use the routine sample_pa( ) to generate a rich-get-richer (preferential attachment) graph with similar degree distribution of  the *directed* facebook graph of the file _facebook_sample_anon.txt_. Use the code similar to:**
+*sample_pa(n.GRAPH, out.seq=degree(GRAPH,mode="out"))*
+**Plot the degree distribution of the generated graph (log-log). What is the exponent of the power law of the generated graph for the in-degrees? **
 
 ```{r}
 #Cargamos los datos del fichero .txt en un dataframe
