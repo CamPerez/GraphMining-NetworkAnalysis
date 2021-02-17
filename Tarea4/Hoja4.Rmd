@@ -26,8 +26,10 @@ SIR_Model = function(x, r, s, beta, gamma){
 
   R = r + gamma * x
   X = x + beta * s * (A %*% x) - gamma * x
+  X = pmin(pmax(X, 0), 1) #lmita al rango de valores 0 a 1
+  R = pmin(pmax(R, 0), 1)
   S = I - X - R
-
+  
   return(list(S, R, X))
 }
 ```
@@ -154,7 +156,8 @@ A continuación realizamos el mismo experimento cambiando el valor de beta a $\b
 
 ```{r echo = FALSE}
 
-beta = 0.25
+beta = 0.7
+gamma = 0.2
 I = rep(1, n)
 R = rep(0, n)
 
