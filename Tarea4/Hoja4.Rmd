@@ -251,7 +251,7 @@ ggplot(df, aes(x = c(1:iter))) +
   geom_line(aes(y = case1_RR), color = "green") +
   geom_line(aes(y = case1_RX), color = "red") +
   geom_line(aes(y = case1_RS), color = "blue") +
-  ggtitle("Evolución del estado de la población", subtitle="Beta=0.5") +
+  ggtitle("Evolución del estado de la población", subtitle="Beta=0.7") +
   xlab("Iteraciones") + ylab("Número de nodos")
 ```
 
